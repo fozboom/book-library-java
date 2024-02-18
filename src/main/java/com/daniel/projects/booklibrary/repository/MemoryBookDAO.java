@@ -9,22 +9,22 @@ import java.util.List;
 @Repository
 public class MemoryBookDAO
 {
-	public final List<Book> BOOKS = new ArrayList<>();
+	public final List<Book> allBooks = new ArrayList<>();
 
 	public List<Book> findAllBooks()
 	{
-		return BOOKS;
+		return allBooks;
 	}
 
 	public Book addBook(Book book)
 	{
-		BOOKS.add(book);
+		allBooks.add(book);
 		return book;
 	}
 
 	public Book findByName(String bookName)
 	{
-		return BOOKS.stream()
+		return allBooks.stream()
 				.filter(name -> name.getName().equals(bookName))
 				.findFirst().orElse(null);
 	}
@@ -35,7 +35,7 @@ public class MemoryBookDAO
 
 		if (book != null)
 		{
-			BOOKS.remove(book);
+			allBooks.remove(book);
 			return "The book has been successfully deleted";
 		}
 		else
