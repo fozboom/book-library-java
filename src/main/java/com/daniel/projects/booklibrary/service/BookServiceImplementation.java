@@ -2,6 +2,7 @@ package com.daniel.projects.booklibrary.service;
 
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.repository.BookRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,12 @@ public class BookServiceImplementation implements BookService {
 	}
 
 
+	@Transactional
 	public String deleteBook(String bookName) {
-		repository.deleteByTitle(bookName);
-		return "Good";
+		int res = repository.deleteByTitle(bookName);
+		if (res > 0) {
+			return "Good";
+		}
+		return "No element found";
 	}
 }

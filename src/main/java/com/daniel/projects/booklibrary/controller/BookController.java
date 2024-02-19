@@ -17,26 +17,25 @@ public class BookController
 	private final BookService service;
 
 	@GetMapping
-	public List<Book> findAllBooks()
-	{
+	public List<Book> findAllBooks() {
 		return service.findAllBooks();
 	}
 
+
 	@PostMapping("save")
-	public Book addBook (@RequestBody Book book)
-	{
+	public Book addBook (@RequestBody Book book) {
 		return service.addBook(book);
 	}
 
 	@GetMapping("find")
-	public Book findByName (@RequestParam String bookName)
-	{
+	public Book findByName (@RequestParam String bookName) {
 		return service.findByName(bookName);
 	}
 
 	@DeleteMapping("delete/{bookName}")
-	public String deleteBook (@PathVariable String bookName)
-	{
+	public String deleteBook (@PathVariable String bookName) {
 		return service.deleteBook(bookName);
 	}
 }
+
+
