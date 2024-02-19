@@ -1,31 +1,24 @@
 package com.daniel.projects.booklibrary.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Table;
 import lombok.*;
+import jakarta.persistence.Id;
 
 @Data
-@Builder
-@AllArgsConstructor
-@RequiredArgsConstructor
+@Entity
+@Table(name = "booklibrary")
 public class Book
 {
-	private static int nextId = 1;
-	private final int id;
-	private String name;
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	private String title;
 	private String author;
+	private String publisher;
 	private double price;
-
-	public Book()
-	{
-		this.id = nextId++;
-	}
-
-	public Book(String name, String author, double price)
-	{
-		this();
-		this.name = name;
-		this.author = author;
-		this.price = price;
-	}
 
 
 
