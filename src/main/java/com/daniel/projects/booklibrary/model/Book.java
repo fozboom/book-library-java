@@ -1,22 +1,21 @@
 package com.daniel.projects.booklibrary.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
-import jakarta.persistence.Id;
 
 @Data
 @Entity
-@Table(name = "booklibrary")
+@Table(name = "book")
 public class Book
 {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private String title;
 	private String author;
-	private String publisher;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "publisher_id")
+	private Publisher publisher;
 	private double price;
 }
