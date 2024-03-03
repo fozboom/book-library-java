@@ -1,7 +1,6 @@
 package com.daniel.projects.booklibrary.repository;
 
 import com.daniel.projects.booklibrary.model.Book;
-import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
