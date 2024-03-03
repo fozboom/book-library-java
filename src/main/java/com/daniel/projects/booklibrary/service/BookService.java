@@ -1,32 +1,41 @@
 package com.daniel.projects.booklibrary.service;
 
+
+import com.daniel.projects.booklibrary.dto.BookDTO;
+import com.daniel.projects.booklibrary.dto.BookDTOMapper;
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.repository.BookRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@Primary
 public class BookService {
 	private final BookRepository repository;
-
-	public List<Book> findAllBooks() {
-		return repository.findAll();
+	private final BookDTOMapper mapper;
+	public List<BookDTO> findAllBooks() {
+		return repository.findAll().
+				stream().map(mapper).collect(Collectors.toList());
 	}
 
 
 	public Book addBook(Book book) {
+
 		return repository.save(book);
 	}
 
 
-	public Book findByName(String bookName) {
-		return repository.findByTitle(bookName);
+	public BookDTO findByTitle(String title) {
+		Optional<BookDTO> result = repository.findByTitle(title).map(mapper);
+		if(result.isEmpty()) {
+			throw new RuntimeException("User not found");
+		}
+		return result.get();
 	}
 
 

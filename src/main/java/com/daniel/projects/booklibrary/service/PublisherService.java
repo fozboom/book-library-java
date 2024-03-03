@@ -1,20 +1,26 @@
 package com.daniel.projects.booklibrary.service;
 
+import com.daniel.projects.booklibrary.dto.PublisherDTO;
+import com.daniel.projects.booklibrary.dto.PublisherDTOMapper;
 import com.daniel.projects.booklibrary.model.Publisher;
 import com.daniel.projects.booklibrary.repository.PublisherRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class PublisherService {
 
 	private final PublisherRepository repository;
+	private final PublisherDTOMapper mapper;
 
-	public List<Publisher> findAllPublishers() {
-		return repository.findAll();
+	public List<PublisherDTO> findAllPublishers() {
+
+		return repository.findAll().
+				stream().map(mapper).collect(Collectors.toList());
 	}
 
 	public Publisher addPublisher(Publisher publisher) {
