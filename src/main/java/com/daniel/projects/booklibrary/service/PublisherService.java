@@ -2,33 +2,35 @@ package com.daniel.projects.booklibrary.service;
 
 import com.daniel.projects.booklibrary.model.Publisher;
 import com.daniel.projects.booklibrary.repository.PublisherRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class PublisherService {
-	private final PublisherRepository publisherRepository;
 
-	@Autowired
-	public PublisherService(PublisherRepository publisherRepository) {
-		this.publisherRepository = publisherRepository;
+	private final PublisherRepository repository;
+
+	public List<Publisher> findAllPublishers() {
+		return repository.findAll();
 	}
 
-	public Publisher savePublisher(Publisher publisher) {
-		return publisherRepository.save(publisher);
+	public Publisher addPublisher(Publisher publisher) {
+		return repository.save(publisher);
 	}
 
-	public Publisher getPublisher(Long id) {
-		return publisherRepository.findById(id).orElse(null);
+	public Publisher findByName(String publisherName) {
+		return repository.findByName(publisherName);
 	}
 
-	public List<Publisher> getAllPublishers() {
-		return publisherRepository.findAll();
-	}
-
-	public void deletePublisher(Long id) {
-		publisherRepository.deleteById(id);
+	public String deletePublisher(String publisherName) {
+		Publisher publisher = findByName(publisherName);
+		if (publisher != null) {
+			repository.delete(publisher);
+			return "Publisher deleted successfully";
+		}
+		return "Publisher not found";
 	}
 }

@@ -16,7 +16,7 @@ public class BookController
 
 	private final BookService service;
 
-	@GetMapping
+	@GetMapping("get")
 	public List<Book> findAllBooks() {
 		return service.findAllBooks();
 	}

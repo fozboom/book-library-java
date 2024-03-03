@@ -1,6 +1,9 @@
 package com.daniel.projects.booklibrary.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,6 +21,7 @@ public class Publisher {
 	private String name;
 
 	@OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties("publisher")
 	private List<Book> books = new ArrayList<>();
 
 	private String address;
