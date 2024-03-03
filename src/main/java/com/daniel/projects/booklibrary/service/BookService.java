@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 @AllArgsConstructor
@@ -19,32 +19,50 @@ public class BookService {
 	private final BookRepository repository;
 	private final BookDTOMapper mapper;
 	public List<BookDTO> findAllBooks() {
-		return repository.findAll().
-				stream().map(mapper).collect(Collectors.toList());
+
+		return repository.findAll().stream().map(mapper).toList();
 	}
 
 
-	public Book addBook(Book book) {
+	public Optional<Book> addBook(Book book) {
+		if (repository.existsByTitle(book.getTitle())) {
+			return Optional.empty();
+		}
 
-		return repository.save(book);
+		return Optional.of(repository.save(book));
 	}
 
 
 	public BookDTO findByTitle(String title) {
-		Optional<BookDTO> result = repository.findByTitle(title).map(mapper);
-		if(result.isEmpty()) {
-			throw new RuntimeException("User not found");
+		Book book = repository.findByTitle(title);
+
+		if (book == null) {
+			return null;
 		}
-		return result.get();
+
+		return mapper.toDTO(book);
 	}
 
+	public boolean updateBook(Double price, String title) {
+		Book book = repository.findByTitle(title);
+		if (book == null) {
+			return false;
+		}
+		book.setTitle(title);
+		book.setPrice(price);
+		repository.save(book);
+		return true;
+	}
 
 	@Transactional
-	public String deleteBook(String bookName) {
-		int res = repository.deleteByTitle(bookName);
-		if (res > 0) {
-			return "Good";
+	public boolean deleteBookByTitle(String title) {
+
+		Book book = repository.findByTitle(title);
+
+		if (book != null) {
+			repository.delete(book);
+			return true;
 		}
-		return "No element found";
+		return false;
 	}
 }

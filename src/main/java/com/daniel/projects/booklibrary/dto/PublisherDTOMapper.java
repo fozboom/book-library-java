@@ -1,16 +1,17 @@
 package com.daniel.projects.booklibrary.dto;
 
 import com.daniel.projects.booklibrary.model.Publisher;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Service
+@Component
 public class PublisherDTOMapper implements Function<Publisher, PublisherDTO> {
 	private final BookDTOMapper bookMapper;
 	public PublisherDTOMapper(BookDTOMapper bookMapper) {
+
 		this.bookMapper = bookMapper;
 	}
 
@@ -25,4 +26,5 @@ public class PublisherDTOMapper implements Function<Publisher, PublisherDTO> {
 				bookDTOs,
 				publisher.getAddress());
 	}
+
 }

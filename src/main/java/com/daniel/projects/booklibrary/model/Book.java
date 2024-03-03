@@ -18,6 +18,7 @@ public class Book
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(unique=true)
 	private String title;
 
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -30,8 +31,7 @@ public class Book
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "publisher_id")
-	@JsonIgnoreProperties("book")
 	private Publisher publisher;
 
-	private double price;
+	private Double price;
 }

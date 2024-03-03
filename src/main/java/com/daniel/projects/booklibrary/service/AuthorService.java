@@ -14,14 +14,17 @@ public class AuthorService {
 	private final AuthorRepository repository;
 
 	public List<Author> findAllAuthors() {
+
 		return repository.findAll();
 	}
 
 	public Author addAuthor(Author author) {
+
 		return repository.save(author);
 	}
 
 	public Author findByName(String name) {
+
 		return repository.findByName(name);
 	}
 

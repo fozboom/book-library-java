@@ -15,21 +15,25 @@ public class AuthorController {
 
 	@GetMapping("get")
 	public List<Author> findAllAuthors() {
+
 		return service.findAllAuthors();
 	}
 
 	@PostMapping("save")
 	public Author addAuthor(@RequestBody Author author) {
+
 		return service.addAuthor(author);
 	}
 
 	@GetMapping("/find")
 	public Author findByName(@RequestParam String name) {
+
 		return service.findByName(name);
 	}
 
 	@DeleteMapping("/delete/{name}")
 	public String deleteAuthor(@PathVariable String name) {
+
 		return service.deleteAuthor(name);
 	}
 }
