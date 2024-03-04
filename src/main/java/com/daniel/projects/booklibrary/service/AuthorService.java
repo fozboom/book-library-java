@@ -15,18 +15,19 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class AuthorService {
 	private final AuthorRepository authorRepository;
 	private final BookRepository bookRepository;
 	private final AuthorResponseDTOMapper mapper;
 
-	@Transactional
+
 	public List<AuthorResponseDTO> findAllAuthors() {
 
 		return authorRepository.findAll().stream().map(mapper).toList();
 	}
 
-	@Transactional
+
 	public Optional<Author> addAuthor(Author author) {
 		if (authorRepository.existsByName(author.getName())) {
 			return Optional.empty();
@@ -35,7 +36,7 @@ public class AuthorService {
 		return Optional.of(authorRepository.save(author));
 	}
 
-	@Transactional
+
 	public AuthorResponseDTO findByName(String name) {
 
 		Author author = authorRepository.findByName(name);
@@ -47,7 +48,7 @@ public class AuthorService {
 		return mapper.apply(author);
 	}
 
-	@Transactional
+
 	public boolean updateAuthorName(Long id, String newName) {
 		Optional<Author> existingAuthorOptional = authorRepository.findById(id);
 		if (existingAuthorOptional.isEmpty()) {
@@ -61,7 +62,7 @@ public class AuthorService {
 		return true;
 	}
 
-	@Transactional
+
 	public boolean deleteAuthorByName (String name) {
 		Author author = authorRepository.findByName(name);
 		if (author != null) {

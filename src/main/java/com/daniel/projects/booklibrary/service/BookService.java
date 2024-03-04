@@ -18,18 +18,19 @@ import java.util.*;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class BookService {
 	private final BookRepository repository;
 	private final AuthorRepository authorRepository;
 	private final PublisherRepository publisherRepository;
 	private final BookResponseDTOMapper mapper;
-	@Transactional
+
 	public List<BookResponseDTO> findAllBooks() {
 
 		return repository.findAll().stream().map(mapper).toList();
 	}
 
-	@Transactional
+
 	public Optional<Book> addBook(Book book) {
 		if (repository.existsByTitle(book.getTitle())) {
 			return Optional.empty();
@@ -62,7 +63,7 @@ public class BookService {
 		return Optional.of(repository.save(book));
 	}
 
-	@Transactional
+
 	public BookResponseDTO findByTitle(String title) {
 		Book book = repository.findByTitle(title);
 
@@ -73,7 +74,7 @@ public class BookService {
 		return mapper.apply(book);
 	}
 
-	@Transactional
+
 	public boolean updateBook(Double price, String title) {
 		Book book = repository.findByTitle(title);
 		if (book == null) {
@@ -84,7 +85,6 @@ public class BookService {
 		return true;
 	}
 
-	@Transactional
 	public boolean deleteBookByTitle(String title) {
 
 		Book book = repository.findByTitle(title);

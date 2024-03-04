@@ -1,7 +1,6 @@
 package com.daniel.projects.booklibrary.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,10 +17,11 @@ public class Book
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+
 	@Column(unique=true)
 	private String title;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(
 			name = "book_author",
 			joinColumns = @JoinColumn(name = "book_id"),
@@ -29,7 +29,7 @@ public class Book
 
 	private List<Author> authors = new ArrayList<>();
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "publisher_id")
 	private Publisher publisher;
 
