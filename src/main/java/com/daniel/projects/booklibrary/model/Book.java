@@ -26,7 +26,7 @@ public class Book
 			name = "book_author",
 			joinColumns = @JoinColumn(name = "book_id"),
 			inverseJoinColumns = @JoinColumn(name = "author_id"))
-	@JsonIgnoreProperties("books")
+
 	private List<Author> authors = new ArrayList<>();
 
 	@ManyToOne(cascade = CascadeType.ALL)

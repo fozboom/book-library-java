@@ -19,12 +19,14 @@ public class PublisherService {
 	private final PublisherRepository repository;
 	private final PublisherResponseDTOMapper mapper;
 
+	@Transactional
 	public List<PublisherResponseDTO> findAllPublishers() {
 
 		return repository.findAll().
 				stream().map(mapper).toList();
 	}
 
+	@Transactional
 	public Optional<Publisher> addPublisher(PublisherSaveDTO newPublisher) {
 		if (repository.existsByName(newPublisher.getName())) {
 			return Optional.empty();
@@ -36,7 +38,7 @@ public class PublisherService {
 	}
 
 
-
+	@Transactional
 	public PublisherResponseDTO findByName(String title) {
 		Publisher publisher = repository.findByName(title);
 

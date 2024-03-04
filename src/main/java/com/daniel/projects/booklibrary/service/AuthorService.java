@@ -20,11 +20,13 @@ public class AuthorService {
 	private final BookRepository bookRepository;
 	private final AuthorResponseDTOMapper mapper;
 
+	@Transactional
 	public List<AuthorResponseDTO> findAllAuthors() {
 
 		return authorRepository.findAll().stream().map(mapper).toList();
 	}
 
+	@Transactional
 	public Optional<Author> addAuthor(Author author) {
 		if (authorRepository.existsByName(author.getName())) {
 			return Optional.empty();
@@ -33,6 +35,7 @@ public class AuthorService {
 		return Optional.of(authorRepository.save(author));
 	}
 
+	@Transactional
 	public AuthorResponseDTO findByName(String name) {
 
 		Author author = authorRepository.findByName(name);

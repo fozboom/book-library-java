@@ -19,7 +19,7 @@ public class Publisher {
 	private String name;
 
 	@OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnoreProperties("publisher")
+
 	private List<Book> books = new ArrayList<>();
 
 	private String address;

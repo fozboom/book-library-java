@@ -14,7 +14,7 @@ public class AuthorResponseDTOMapper implements Function<Author, AuthorResponseD
 		List<BookTitleDTO> bookTitleDTOs = author.getBooks().stream()
 				.map(book -> new BookTitleDTO(book.getTitle())).toList();
 
-		return new AuthorResponseDTO(author.getName(), bookTitleDTOs);
+		return new AuthorResponseDTO(author.getId(), author.getName(), bookTitleDTOs);
 	}
 
 
