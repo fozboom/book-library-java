@@ -1,5 +1,6 @@
-package com.daniel.projects.booklibrary.dto;
+package com.daniel.projects.booklibrary.dto.publisher.withoutbooks;
 
+import com.daniel.projects.booklibrary.dto.publisher.withoutbooks.PublisherWithoutBooksDTO;
 import com.daniel.projects.booklibrary.model.Publisher;
 import org.springframework.stereotype.Component;
 
@@ -9,22 +10,15 @@ import java.util.function.Function;
 public class PublisherWithoutBooksDTOMapper implements Function<Publisher, PublisherWithoutBooksDTO> {
 	@Override
 	public PublisherWithoutBooksDTO apply(Publisher publisher) {
+		if (publisher == null) {
+			return null;
+		}
+
 		PublisherWithoutBooksDTO publisherDTO = new PublisherWithoutBooksDTO();
+
 		publisherDTO.setName(publisher.getName());
 		publisherDTO.setAddress(publisher.getAddress());
+		publisherDTO.setId(publisher.getId());
 		return publisherDTO;
-	}
-
-	public PublisherWithoutBooksDTO toDTO(Publisher publisher) {
-		if (publisher == null) {
-            return null;
-        }
-
-        PublisherWithoutBooksDTO publisherDTO = new PublisherWithoutBooksDTO();
-
-        publisherDTO.setName(publisher.getName());
-        publisherDTO.setAddress(publisher.getAddress());
-
-        return publisherDTO;
 	}
 }

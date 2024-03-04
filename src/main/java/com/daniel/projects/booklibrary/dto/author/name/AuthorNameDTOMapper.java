@@ -1,5 +1,6 @@
-package com.daniel.projects.booklibrary.dto;
+package com.daniel.projects.booklibrary.dto.author.name;
 
+import com.daniel.projects.booklibrary.dto.author.name.AuthorNameDTO;
 import com.daniel.projects.booklibrary.model.Author;
 import org.springframework.stereotype.Component;
 

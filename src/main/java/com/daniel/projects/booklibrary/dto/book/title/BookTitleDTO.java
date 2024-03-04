@@ -1,4 +1,4 @@
-package com.daniel.projects.booklibrary.dto;
+package com.daniel.projects.booklibrary.dto.book.title;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

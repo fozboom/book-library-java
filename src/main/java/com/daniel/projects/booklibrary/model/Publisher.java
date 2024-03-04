@@ -15,7 +15,7 @@ public class Publisher {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	@Column(unique=true)
 	private String name;
 
 	@OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true)

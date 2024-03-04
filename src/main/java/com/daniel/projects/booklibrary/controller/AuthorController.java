@@ -1,6 +1,6 @@
 package com.daniel.projects.booklibrary.controller;
 
-import com.daniel.projects.booklibrary.dto.AuthorResponseDTO;
+import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTO;
 import com.daniel.projects.booklibrary.model.Author;
 import com.daniel.projects.booklibrary.service.AuthorService;
 import org.springframework.http.HttpStatus;

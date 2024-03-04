@@ -1,5 +1,8 @@
-package com.daniel.projects.booklibrary.dto;
+package com.daniel.projects.booklibrary.dto.book.response;
 
+import com.daniel.projects.booklibrary.dto.book.response.BookResponseDTO;
+import com.daniel.projects.booklibrary.dto.publisher.withoutbooks.PublisherWithoutBooksDTOMapper;
+import com.daniel.projects.booklibrary.dto.author.name.AuthorNameDTOMapper;
 import com.daniel.projects.booklibrary.model.Book;
 import org.springframework.stereotype.Component;
 
@@ -14,15 +17,6 @@ public class BookResponseDTOMapper implements Function<Book, BookResponseDTO> {
 
 	@Override
 	public BookResponseDTO apply(Book book) {
-		BookResponseDTO bookDTO = new BookResponseDTO();
-		bookDTO.setTitle(book.getTitle());
-		bookDTO.setAuthors(book.getAuthors().stream().map(authorMapper).toList());
-		bookDTO.setPublisher(publisherMapper.apply(book.getPublisher()));
-		bookDTO.setPrice(book.getPrice());
-		return bookDTO;
-	}
-
-	public BookResponseDTO toDTO(Book book) {
 		if (book == null) {
 			return null;
 		}
@@ -31,10 +25,11 @@ public class BookResponseDTOMapper implements Function<Book, BookResponseDTO> {
 
 		bookDTO.setTitle(book.getTitle());
 		bookDTO.setAuthors(book.getAuthors().stream().map(authorMapper).toList());
-
-		bookDTO.setPublisher(publisherMapper.toDTO(book.getPublisher()));
+		bookDTO.setId(book.getId());
+		bookDTO.setPublisher(publisherMapper.apply(book.getPublisher()));
 		bookDTO.setPrice(book.getPrice());
 
 		return bookDTO;
 	}
+
 }

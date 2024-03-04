@@ -1,7 +1,7 @@
 package com.daniel.projects.booklibrary.service;
 
-import com.daniel.projects.booklibrary.dto.AuthorResponseDTO;
-import com.daniel.projects.booklibrary.dto.AuthorResponseDTOMapper;
+import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTO;
+import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTOMapper;
 import com.daniel.projects.booklibrary.model.Author;
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.repository.AuthorRepository;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

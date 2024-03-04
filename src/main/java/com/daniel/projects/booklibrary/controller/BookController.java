@@ -1,7 +1,7 @@
 package com.daniel.projects.booklibrary.controller;
 
 
-import com.daniel.projects.booklibrary.dto.BookResponseDTO;
+import com.daniel.projects.booklibrary.dto.book.response.BookResponseDTO;
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.service.BookService;
 import lombok.AllArgsConstructor;
