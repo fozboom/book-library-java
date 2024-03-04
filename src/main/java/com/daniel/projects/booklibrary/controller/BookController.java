@@ -18,6 +18,7 @@ import java.util.Optional;
 public class BookController
 {
 	private final BookService service;
+	private static final String SUCCESS_MESSAGE = "Success";
 	@GetMapping("get")
 	public List<BookResponseDTO> findAllBooks() {
 
@@ -28,7 +29,7 @@ public class BookController
 	public ResponseEntity<String> addBook(@RequestBody Book book) {
 		Optional<Book> savedBook = service.addBook(book);
 		if (savedBook.isPresent()) {
-			return new ResponseEntity<>("Success", HttpStatus.CREATED);
+			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>("Book with this title already exists", HttpStatus.BAD_REQUEST);
 		}
@@ -47,7 +48,7 @@ public class BookController
 	ResponseEntity<String> updateBook(@RequestParam Double price, @RequestParam String title) {
 		boolean updated = service.updateBook(price, title);
 		if(updated) {
-            return new ResponseEntity<>("Success", HttpStatus.OK);
+            return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
         }
 		return new ResponseEntity<>("Book to update not found", HttpStatus.NOT_FOUND);
 	}
@@ -55,7 +56,7 @@ public class BookController
 	@DeleteMapping("delete/{bookName}")
 	public ResponseEntity<String> deleteBookByTitle (@PathVariable String bookName) {
 		if(service.deleteBookByTitle(bookName)) {
-			return new ResponseEntity<>("Success",HttpStatus.OK);
+			return new ResponseEntity<>(SUCCESS_MESSAGE,HttpStatus.OK);
 		}
 		return new ResponseEntity<>("Book not found",HttpStatus.NOT_FOUND);
 	}

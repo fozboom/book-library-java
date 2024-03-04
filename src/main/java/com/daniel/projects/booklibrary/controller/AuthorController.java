@@ -1,9 +1,7 @@
 package com.daniel.projects.booklibrary.controller;
 
 import com.daniel.projects.booklibrary.dto.AuthorResponseDTO;
-import com.daniel.projects.booklibrary.dto.BookResponseDTO;
 import com.daniel.projects.booklibrary.model.Author;
-import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.service.AuthorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +16,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AuthorController {
 	private final AuthorService service;
+	private static final String SUCCESS_MESSAGE = "Success";
 
 	@GetMapping("get")
 	public List<AuthorResponseDTO> findAllAuthors() {
@@ -29,7 +28,7 @@ public class AuthorController {
 	public ResponseEntity<String> addAuthor(@RequestBody Author author) {
 		Optional<Author> savedBook = service.addAuthor(author);
 		if (savedBook.isPresent()) {
-			return new ResponseEntity<>("Success", HttpStatus.CREATED);
+			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>("Book with this title already exists", HttpStatus.BAD_REQUEST);
 		}
@@ -48,7 +47,7 @@ public class AuthorController {
 	ResponseEntity<String> updateBook(@RequestParam Long id, @RequestParam String name) {
 		boolean updated = service.updateAuthorName(id, name);
 		if(updated) {
-			return new ResponseEntity<>("Success", HttpStatus.OK);
+			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
 		}
 		return new ResponseEntity<>("Author to update not found", HttpStatus.NOT_FOUND);
 	}
@@ -56,7 +55,7 @@ public class AuthorController {
 	@DeleteMapping("/delete/{name}")
 	public ResponseEntity<String> deleteBookByName (@PathVariable String name) {
 		if(service.deleteAuthorByName(name)) {
-			return new ResponseEntity<>("Success",HttpStatus.OK);
+			return new ResponseEntity<>(SUCCESS_MESSAGE,HttpStatus.OK);
 		}
 		return new ResponseEntity<>("Author not found",HttpStatus.NOT_FOUND);
 	}

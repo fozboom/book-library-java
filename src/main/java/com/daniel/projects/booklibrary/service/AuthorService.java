@@ -42,7 +42,7 @@ public class AuthorService {
 			return null;
 		}
 
-		return mapper.toDTO(author);
+		return mapper.apply(author);
 	}
 
 	@Transactional
