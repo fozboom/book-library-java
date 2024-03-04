@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 import java.util.function.Function;
 
 @Component
-public class AuthorDTOMapper implements Function<Author, AuthorDTO> {
+public class AuthorNameDTOMapper implements Function<Author, AuthorNameDTO> {
 	@Override
-    public AuthorDTO apply(Author author) {
+    public AuthorNameDTO apply(Author author) {
 
-        return new AuthorDTO(author.getName());
+        return new AuthorNameDTO(author.getName());
     }
 }

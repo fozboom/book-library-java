@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthorDTO {
-	private String name;
+public class BookTitleDTO {
+	private String title;
 }

@@ -1,7 +1,7 @@
 package com.daniel.projects.booklibrary.controller;
 
 
-import com.daniel.projects.booklibrary.dto.BookDTO;
+import com.daniel.projects.booklibrary.dto.BookResponseDTO;
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.service.BookService;
 import lombok.AllArgsConstructor;
@@ -19,24 +19,24 @@ public class BookController
 {
 	private final BookService service;
 	@GetMapping("get")
-	public List<BookDTO> findAllBooks() {
+	public List<BookResponseDTO> findAllBooks() {
 
 		return service.findAllBooks();
 	}
 
 	@PostMapping("save")
-	public ResponseEntity<?> addBook(@RequestBody Book book) {
+	public ResponseEntity<String> addBook(@RequestBody Book book) {
 		Optional<Book> savedBook = service.addBook(book);
 		if (savedBook.isPresent()) {
-			return new ResponseEntity<>(savedBook.get(), HttpStatus.CREATED);
+			return new ResponseEntity<>("Success", HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>("Book with this title already exists", HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@GetMapping("find")
-	public ResponseEntity<BookDTO> findByName (@RequestParam String bookName) {
-		BookDTO book = service.findByTitle(bookName);
+	public ResponseEntity<BookResponseDTO> findByName (@RequestParam String bookName) {
+		BookResponseDTO book = service.findByTitle(bookName);
 		if(book == null) {
 			return ResponseEntity.notFound().build();
 		}
@@ -54,7 +54,6 @@ public class BookController
 
 	@DeleteMapping("delete/{bookName}")
 	public ResponseEntity<String> deleteBookByTitle (@PathVariable String bookName) {
-
 		if(service.deleteBookByTitle(bookName)) {
 			return new ResponseEntity<>("Success",HttpStatus.OK);
 		}

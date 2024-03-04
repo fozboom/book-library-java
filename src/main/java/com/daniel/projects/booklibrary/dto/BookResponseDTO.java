@@ -9,8 +9,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PublisherDTO {
-	private String name;
-	private List<BookResponseDTO> books;
-	private String address;
+public class BookResponseDTO {
+	private String title;
+	private List<AuthorNameDTO> authors;
+	private PublisherWithoutBooksDTO publisher;
+	private Double price;
 }

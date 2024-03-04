@@ -1,8 +1,8 @@
 package com.daniel.projects.booklibrary.service;
 
 
-import com.daniel.projects.booklibrary.dto.BookDTO;
-import com.daniel.projects.booklibrary.dto.BookDTOMapper;
+import com.daniel.projects.booklibrary.dto.BookResponseDTO;
+import com.daniel.projects.booklibrary.dto.BookResponseDTOMapper;
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.repository.BookRepository;
 import jakarta.transaction.Transactional;
@@ -17,8 +17,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class BookService {
 	private final BookRepository repository;
-	private final BookDTOMapper mapper;
-	public List<BookDTO> findAllBooks() {
+	private final BookResponseDTOMapper mapper;
+	public List<BookResponseDTO> findAllBooks() {
 
 		return repository.findAll().stream().map(mapper).toList();
 	}
@@ -33,7 +33,7 @@ public class BookService {
 	}
 
 
-	public BookDTO findByTitle(String title) {
+	public BookResponseDTO findByTitle(String title) {
 		Book book = repository.findByTitle(title);
 
 		if (book == null) {

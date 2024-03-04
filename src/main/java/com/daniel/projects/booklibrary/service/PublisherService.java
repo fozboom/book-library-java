@@ -20,7 +20,7 @@ public class PublisherService {
 	public List<PublisherDTO> findAllPublishers() {
 
 		return repository.findAll().
-				stream().map(mapper).collect(Collectors.toList());
+				stream().map(mapper).toList();
 	}
 
 	public Publisher addPublisher(Publisher publisher) {

@@ -1,39 +1,79 @@
 package com.daniel.projects.booklibrary.service;
 
+import com.daniel.projects.booklibrary.dto.AuthorResponseDTO;
+import com.daniel.projects.booklibrary.dto.AuthorResponseDTOMapper;
 import com.daniel.projects.booklibrary.model.Author;
+import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.repository.AuthorRepository;
+import com.daniel.projects.booklibrary.repository.BookRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class AuthorService {
-	private final AuthorRepository repository;
+	private final AuthorRepository authorRepository;
+	private final BookRepository bookRepository;
+	private final AuthorResponseDTOMapper mapper;
 
-	public List<Author> findAllAuthors() {
+	public List<AuthorResponseDTO> findAllAuthors() {
 
-		return repository.findAll();
+		return authorRepository.findAll().stream().map(mapper).toList();
 	}
 
-	public Author addAuthor(Author author) {
+	public Optional<Author> addAuthor(Author author) {
+		if (authorRepository.existsByName(author.getName())) {
+			return Optional.empty();
+		}
 
-		return repository.save(author);
+		return Optional.of(authorRepository.save(author));
 	}
 
-	public Author findByName(String name) {
+	public AuthorResponseDTO findByName(String name) {
 
-		return repository.findByName(name);
+		Author author = authorRepository.findByName(name);
+
+		if (author == null) {
+			return null;
+		}
+
+		return mapper.toDTO(author);
 	}
 
 	@Transactional
-	public String deleteAuthor(String name) {
-		int res = repository.deleteByName(name);
-		if (res > 0) {
-			return "Author deleted successfully";
+	public boolean updateAuthorName(Long id, String newName) {
+		Optional<Author> existingAuthorOptional = authorRepository.findById(id);
+		if (existingAuthorOptional.isEmpty()) {
+			return false;
 		}
-		return "No author found with the given name";
+
+		Author existingAuthor = existingAuthorOptional.get();
+		existingAuthor.setName(newName);
+		authorRepository.save(existingAuthor);
+
+		return true;
+	}
+
+	@Transactional
+	public boolean deleteAuthorByName (String name) {
+		Author author = authorRepository.findByName(name);
+		if (author != null) {
+			for (Book book : author.getBooks()) {
+				book.getAuthors().remove(author);
+				if (book.getAuthors().isEmpty()) {
+					bookRepository.delete(book);
+				} else {
+					bookRepository.save(book);
+				}
+			}
+			authorRepository.delete(author);
+			return true;
+		}
+		return false;
 	}
 }

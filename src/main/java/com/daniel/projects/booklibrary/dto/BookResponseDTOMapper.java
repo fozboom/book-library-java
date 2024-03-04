@@ -7,14 +7,14 @@ import java.util.function.Function;
 
 
 @Component
-public class BookDTOMapper implements Function<Book, BookDTO> {
+public class BookResponseDTOMapper implements Function<Book, BookResponseDTO> {
 
-	private final AuthorDTOMapper authorMapper = new AuthorDTOMapper();
+	private final AuthorNameDTOMapper authorMapper = new AuthorNameDTOMapper();
 	private final PublisherWithoutBooksDTOMapper publisherMapper = new PublisherWithoutBooksDTOMapper();
 
 	@Override
-	public BookDTO apply(Book book) {
-		BookDTO bookDTO = new BookDTO();
+	public BookResponseDTO apply(Book book) {
+		BookResponseDTO bookDTO = new BookResponseDTO();
 		bookDTO.setTitle(book.getTitle());
 		bookDTO.setAuthors(book.getAuthors().stream().map(authorMapper).toList());
 		bookDTO.setPublisher(publisherMapper.apply(book.getPublisher()));
@@ -22,12 +22,12 @@ public class BookDTOMapper implements Function<Book, BookDTO> {
 		return bookDTO;
 	}
 
-	public BookDTO toDTO(Book book) {
+	public BookResponseDTO toDTO(Book book) {
 		if (book == null) {
 			return null;
 		}
 
-		BookDTO bookDTO = new BookDTO();
+		BookResponseDTO bookDTO = new BookResponseDTO();
 
 		bookDTO.setTitle(book.getTitle());
 		bookDTO.setAuthors(book.getAuthors().stream().map(authorMapper).toList());
