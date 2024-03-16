@@ -19,6 +19,7 @@ public class BookController
 {
 	private final BookService service;
 	private static final String SUCCESS_MESSAGE = "Success";
+
 	@GetMapping("get")
 	public List<BookResponseDTO> findAllBooks() {
 
@@ -35,14 +36,20 @@ public class BookController
 		}
 	}
 
-	@GetMapping("find")
-	public ResponseEntity<BookResponseDTO> findByName (@RequestParam String bookName) {
+	@GetMapping("findByTitle")
+	public ResponseEntity<BookResponseDTO> findByTitle(@RequestParam String bookName) {
 		BookResponseDTO book = service.findByTitle(bookName);
 		if(book == null) {
 			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(book);
 	}
+
+	@GetMapping("findByAuthorName")
+    public ResponseEntity<List<BookResponseDTO>> findByAuthorName(@RequestParam String authorName) {
+
+        return ResponseEntity.ok(service.findByAuthorName(authorName));
+    }
 
 	@PutMapping("update")
 	ResponseEntity<String> updateBook(@RequestParam Double price, @RequestParam String title) {

@@ -29,7 +29,7 @@ public class Book
 
 	private List<Author> authors = new ArrayList<>();
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "publisher_id")
 	private Publisher publisher;
 

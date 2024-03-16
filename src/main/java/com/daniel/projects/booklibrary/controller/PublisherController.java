@@ -57,7 +57,7 @@ public class PublisherController {
 
 	@DeleteMapping("delete/{publisherName}")
 	public ResponseEntity<String> deletePublisher(@PathVariable String publisherName) {
-		if(service.deleteBookByTitle(publisherName)) {
+		if(service.deletePublisherByName(publisherName)) {
 			return new ResponseEntity<>(SUCCESS_MESSAGE,HttpStatus.OK);
 		}
 		return new ResponseEntity<>("Publisher not found",HttpStatus.NOT_FOUND);

@@ -3,7 +3,10 @@ package com.daniel.projects.booklibrary.service;
 import com.daniel.projects.booklibrary.dto.publisher.response.PublisherResponseDTO;
 import com.daniel.projects.booklibrary.dto.publisher.response.PublisherResponseDTOMapper;
 import com.daniel.projects.booklibrary.dto.publisher.save.PublisherSaveDTO;
+import com.daniel.projects.booklibrary.model.Author;
+import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.model.Publisher;
+import com.daniel.projects.booklibrary.repository.BookRepository;
 import com.daniel.projects.booklibrary.repository.PublisherRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -18,12 +21,12 @@ import java.util.Optional;
 public class PublisherService {
 
 	private final PublisherRepository repository;
+	private final BookRepository bookRepository;
 	private final PublisherResponseDTOMapper mapper;
 
 	public List<PublisherResponseDTO> findAllPublishers() {
 
-		return repository.findAll().
-				stream().map(mapper).toList();
+		return repository.findAll().stream().map(mapper).toList();
 	}
 
 	public Optional<Publisher> addPublisher(PublisherSaveDTO newPublisher) {
@@ -61,11 +64,14 @@ public class PublisherService {
 		return true;
 	}
 
-	public boolean deleteBookByTitle(String name) {
-
+	public boolean deletePublisherByName(String name) {
 		Publisher publisher = repository.findByName(name);
 
 		if (publisher != null) {
+			for (Book book: publisher.getBooks()) {
+				book.setPublisher(null);
+				bookRepository.save(book);
+			}
 			repository.delete(publisher);
 			return true;
 		}

@@ -2,6 +2,7 @@ package com.daniel.projects.booklibrary.service;
 
 import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTO;
 import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTOMapper;
+import com.daniel.projects.booklibrary.dto.book.response.BookResponseDTO;
 import com.daniel.projects.booklibrary.model.Author;
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.repository.AuthorRepository;
@@ -39,12 +40,10 @@ public class AuthorService {
 
 	public AuthorResponseDTO findByName(String name) {
 
-		Author author = authorRepository.findByName(name);
-
+		Author author = authorRepository.findAuthorByName(name);
 		if (author == null) {
 			return null;
 		}
-
 		return mapper.apply(author);
 	}
 
@@ -63,16 +62,15 @@ public class AuthorService {
 	}
 
 
+
+
+
 	public boolean deleteAuthorByName (String name) {
 		Author author = authorRepository.findByName(name);
 		if (author != null) {
 			for (Book book : author.getBooks()) {
 				book.getAuthors().remove(author);
-				if (book.getAuthors().isEmpty()) {
-					bookRepository.delete(book);
-				} else {
-					bookRepository.save(book);
-				}
+				bookRepository.save(book);
 			}
 			authorRepository.delete(author);
 			return true;

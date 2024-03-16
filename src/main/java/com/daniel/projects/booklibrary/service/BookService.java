@@ -74,6 +74,11 @@ public class BookService {
 		return mapper.apply(book);
 	}
 
+	public List<BookResponseDTO> findByAuthorName(String author) {
+		List<Book> books = repository.findByAuthorName(author);
+		return books.stream().map(mapper).toList();
+	}
+
 
 	public boolean updateBook(Double price, String title) {
 		Book book = repository.findByTitle(title);
