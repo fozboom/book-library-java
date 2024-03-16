@@ -2,7 +2,6 @@ package com.daniel.projects.booklibrary.service;
 
 import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTO;
 import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTOMapper;
-import com.daniel.projects.booklibrary.dto.book.response.BookResponseDTO;
 import com.daniel.projects.booklibrary.model.Author;
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.repository.AuthorRepository;

@@ -1,6 +1,7 @@
 package com.daniel.projects.booklibrary.service;
 
 
+import com.daniel.projects.booklibrary.cache.InMemoryCache;
 import com.daniel.projects.booklibrary.dto.book.response.BookResponseDTO;
 import com.daniel.projects.booklibrary.dto.book.response.BookResponseDTOMapper;
 import com.daniel.projects.booklibrary.model.Author;
@@ -11,7 +12,9 @@ import com.daniel.projects.booklibrary.repository.BookRepository;
 import com.daniel.projects.booklibrary.repository.PublisherRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
 
 import java.util.*;
 
@@ -20,19 +23,21 @@ import java.util.*;
 @AllArgsConstructor
 @Transactional
 public class BookService {
-	private final BookRepository repository;
+	private final InMemoryCache<Long, Book> bookCache = new InMemoryCache<>(100);
+	private final BookRepository bookRepository;
 	private final AuthorRepository authorRepository;
 	private final PublisherRepository publisherRepository;
 	private final BookResponseDTOMapper mapper;
+	private static final Logger logger = LoggerFactory.getLogger(BookService.class);
 
 	public List<BookResponseDTO> findAllBooks() {
 
-		return repository.findAll().stream().map(mapper).toList();
+		return bookRepository.findAll().stream().map(mapper).toList();
 	}
 
 
 	public Optional<Book> addBook(Book book) {
-		if (repository.existsByTitle(book.getTitle())) {
+		if (bookRepository.existsByTitle(book.getTitle())) {
 			return Optional.empty();
 		}
 
@@ -60,42 +65,71 @@ public class BookService {
 		}
 
 		book.setAuthors(finalAuthors);
-		return Optional.of(repository.save(book));
+		bookCache.put(book.getId(), book);
+		return Optional.of(bookRepository.save(book));
 	}
 
 
 	public BookResponseDTO findByTitle(String title) {
-		Book book = repository.findByTitle(title);
+		Book book = bookRepository.findByTitle(title);
 
 		if (book == null) {
 			return null;
+		}
+		if (bookCache.get(book.getId()) == null) {
+			bookCache.put(book.getId(), book);
+			logger.info("Book with title {} retrieved from repository and added to cache", title);
+		}
+		return mapper.apply(book);
+	}
+
+
+	public BookResponseDTO findById(Long id) {
+		Book book = bookCache.get(id);
+
+		if (book == null) {
+			Optional<Book> optionalBook = bookRepository.findById(id);
+
+			if (optionalBook.isEmpty()) {
+				return null;
+			}
+
+			Book retrievedBook = optionalBook.get();
+
+			bookCache.put(id, retrievedBook);
+			logger.info("Book with id {} retrieved from repository and added to cache", id);
+			return mapper.apply(retrievedBook);
+		} else {
+			logger.info("Book with id {} retrieved from cache", id);
 		}
 
 		return mapper.apply(book);
 	}
 
 	public List<BookResponseDTO> findByAuthorName(String author) {
-		List<Book> books = repository.findByAuthorName(author);
+		List<Book> books = bookRepository.findByAuthorName(author);
 		return books.stream().map(mapper).toList();
 	}
 
 
 	public boolean updateBook(Double price, String title) {
-		Book book = repository.findByTitle(title);
+		Book book = bookRepository.findByTitle(title);
 		if (book == null) {
 			return false;
 		}
 		book.setPrice(price);
-		repository.save(book);
+		bookRepository.save(book);
+		bookCache.put(book.getId(), book);
 		return true;
 	}
 
 	public boolean deleteBookByTitle(String title) {
 
-		Book book = repository.findByTitle(title);
+		Book book = bookRepository.findByTitle(title);
 
 		if (book != null) {
-			repository.delete(book);
+			bookRepository.delete(book);
+			bookCache.remove(book.getId());
 			return true;
 		}
 		return false;

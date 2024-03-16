@@ -51,6 +51,15 @@ public class BookController
         return ResponseEntity.ok(service.findByAuthorName(authorName));
     }
 
+	@GetMapping("findById")
+	public ResponseEntity<BookResponseDTO> findById(@RequestParam Long id) {
+		BookResponseDTO book = service.findById(id);
+		if(book == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(book);
+	}
+
 	@PutMapping("update")
 	ResponseEntity<String> updateBook(@RequestParam Double price, @RequestParam String title) {
 		boolean updated = service.updateBook(price, title);
