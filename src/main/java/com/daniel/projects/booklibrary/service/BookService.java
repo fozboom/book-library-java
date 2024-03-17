@@ -78,7 +78,7 @@ public class BookService {
 		}
 		if (cacheService.getBook(book.getId()) == null) {
 			cacheService.addBook(book);
-			logger.info("Book with title {} retrieved from repository and added to cache", title);
+			logger.info("Book retrieved from repository and added to cache");
 		}
 		return mapper.apply(book);
 	}
@@ -97,10 +97,10 @@ public class BookService {
 			Book retrievedBook = optionalBook.get();
 
 			cacheService.addBook(retrievedBook);
-			logger.info("Book with id {} retrieved from repository and added to cache", id);
+			logger.info("Book retrieved from repository and added to cache");
 			return mapper.apply(retrievedBook);
 		} else {
-			logger.info("Book with id {} retrieved from cache", id);
+			logger.info("Book with id retrieved from cache");
 		}
 
 		return mapper.apply(book);

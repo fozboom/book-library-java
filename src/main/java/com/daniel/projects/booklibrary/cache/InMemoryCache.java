@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Component
-public class InMemoryCache<K, V> {
+public abstract class InMemoryCache<K, V> {
 
 	private final Map<K, V> cacheMap;
 	private final Integer maxSize;
