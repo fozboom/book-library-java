@@ -23,7 +23,7 @@ import java.util.*;
 @AllArgsConstructor
 @Transactional
 public class BookService {
-	private final InMemoryCache<Long, Book> bookCache = new InMemoryCache<>(100);
+	private final CacheService cacheService;
 	private final BookRepository bookRepository;
 	private final AuthorRepository authorRepository;
 	private final PublisherRepository publisherRepository;
@@ -65,7 +65,7 @@ public class BookService {
 		}
 
 		book.setAuthors(finalAuthors);
-		bookCache.put(book.getId(), book);
+		cacheService.addBook(book);
 		return Optional.of(bookRepository.save(book));
 	}
 
@@ -76,8 +76,8 @@ public class BookService {
 		if (book == null) {
 			return null;
 		}
-		if (bookCache.get(book.getId()) == null) {
-			bookCache.put(book.getId(), book);
+		if (cacheService.getBook(book.getId()) == null) {
+			cacheService.addBook(book);
 			logger.info("Book with title {} retrieved from repository and added to cache", title);
 		}
 		return mapper.apply(book);
@@ -85,7 +85,7 @@ public class BookService {
 
 
 	public BookResponseDTO findById(Long id) {
-		Book book = bookCache.get(id);
+		Book book = cacheService.getBook(id);
 
 		if (book == null) {
 			Optional<Book> optionalBook = bookRepository.findById(id);
@@ -96,7 +96,7 @@ public class BookService {
 
 			Book retrievedBook = optionalBook.get();
 
-			bookCache.put(id, retrievedBook);
+			cacheService.addBook(retrievedBook);
 			logger.info("Book with id {} retrieved from repository and added to cache", id);
 			return mapper.apply(retrievedBook);
 		} else {
@@ -119,7 +119,7 @@ public class BookService {
 		}
 		book.setPrice(price);
 		bookRepository.save(book);
-		bookCache.put(book.getId(), book);
+		cacheService.addBook(book);
 		return true;
 	}
 
@@ -129,7 +129,7 @@ public class BookService {
 
 		if (book != null) {
 			bookRepository.delete(book);
-			bookCache.remove(book.getId());
+			cacheService.removeBook(book.getId());
 			return true;
 		}
 		return false;

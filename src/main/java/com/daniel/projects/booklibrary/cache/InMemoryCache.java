@@ -14,7 +14,6 @@ public class InMemoryCache<K, V> {
 	private final Map<K, V> cacheMap;
 	private final Integer maxSize;
 
-	@Autowired
 	public InMemoryCache(@Value("${cache.maxSize}") Integer maxSize) {
 		this.maxSize = maxSize;
 		this.cacheMap = new LinkedHashMap<>() {
@@ -26,18 +25,22 @@ public class InMemoryCache<K, V> {
 	}
 
 	public V get(K key) {
+
 		return cacheMap.get(key);
 	}
 
 	public void put(K key, V value) {
+
 		cacheMap.put(key, value);
 	}
 
 	public void remove(K key) {
+
 		cacheMap.remove(key);
 	}
 
 	public void clear() {
+
 		cacheMap.clear();
 	}
 }

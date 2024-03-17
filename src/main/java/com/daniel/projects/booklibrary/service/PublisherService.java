@@ -23,20 +23,22 @@ public class PublisherService {
 	private final PublisherRepository repository;
 	private final BookRepository bookRepository;
 	private final PublisherResponseDTOMapper mapper;
+	private final CacheService cacheService;
 
 	public List<PublisherResponseDTO> findAllPublishers() {
 
 		return repository.findAll().stream().map(mapper).toList();
 	}
 
-	public Optional<Publisher> addPublisher(PublisherSaveDTO newPublisher) {
-		if (repository.existsByName(newPublisher.getName())) {
+	public Optional<Publisher> addPublisher(PublisherSaveDTO publisher) {
+		if (repository.existsByName(publisher.getName())) {
 			return Optional.empty();
 		}
-		Publisher publisher = new Publisher();
-		publisher.setName(newPublisher.getName());
-		publisher.setAddress(newPublisher.getAddress());
-		return Optional.of(repository.save(publisher));
+		Publisher newPublisher = new Publisher();
+		newPublisher.setName(publisher.getName());
+		newPublisher.setAddress(publisher.getAddress());
+		cacheService.addPublisher(newPublisher);
+		return Optional.of(repository.save(newPublisher));
 	}
 
 

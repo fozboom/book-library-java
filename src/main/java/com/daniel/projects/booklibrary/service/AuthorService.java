@@ -20,6 +20,7 @@ public class AuthorService {
 	private final AuthorRepository authorRepository;
 	private final BookRepository bookRepository;
 	private final AuthorResponseDTOMapper mapper;
+	private final CacheService cacheService;
 
 
 	public List<AuthorResponseDTO> findAllAuthors() {
@@ -32,7 +33,7 @@ public class AuthorService {
 		if (authorRepository.existsByName(author.getName())) {
 			return Optional.empty();
 		}
-
+		cacheService.addAuthor(author);
 		return Optional.of(authorRepository.save(author));
 	}
 
@@ -56,7 +57,7 @@ public class AuthorService {
 		Author existingAuthor = existingAuthorOptional.get();
 		existingAuthor.setName(newName);
 		authorRepository.save(existingAuthor);
-
+		cacheService.updateAuthor(existingAuthor);
 		return true;
 	}
 
@@ -72,6 +73,7 @@ public class AuthorService {
 				bookRepository.save(book);
 			}
 			authorRepository.delete(author);
+			cacheService.removeAuthor(author.getId());
 			return true;
 		}
 		return false;
