@@ -1,10 +1,8 @@
 package com.daniel.projects.booklibrary.cache;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -14,7 +12,7 @@ public abstract class InMemoryCache<K, V> {
 	private final Map<K, V> cacheMap;
 	private final Integer maxSize;
 
-	public InMemoryCache(@Value("${cache.maxSize}") Integer maxSize) {
+	protected InMemoryCache(@Value("${cache.maxSize}") Integer maxSize) {
 		this.maxSize = maxSize;
 		this.cacheMap = new LinkedHashMap<>() {
 			@Override
@@ -39,8 +37,9 @@ public abstract class InMemoryCache<K, V> {
 		cacheMap.remove(key);
 	}
 
-	public void clear() {
+	public Collection<V> values() {
 
-		cacheMap.clear();
+		return cacheMap.values();
 	}
+
 }

@@ -6,6 +6,8 @@ import com.daniel.projects.booklibrary.model.Author;
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.repository.AuthorRepository;
 import com.daniel.projects.booklibrary.repository.BookRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
@@ -19,13 +21,15 @@ import java.util.Optional;
 public class AuthorService {
 	private final AuthorRepository authorRepository;
 	private final BookRepository bookRepository;
-	private final AuthorResponseDTOMapper mapper;
+	private final AuthorResponseDTOMapper authorMapper;
 	private final CacheService cacheService;
+
+	private static final Logger logger = LoggerFactory.getLogger(BookService.class);
 
 
 	public List<AuthorResponseDTO> findAllAuthors() {
 
-		return authorRepository.findAll().stream().map(mapper).toList();
+		return authorRepository.findAll().stream().map(authorMapper).toList();
 	}
 
 
@@ -44,7 +48,7 @@ public class AuthorService {
 		if (author == null) {
 			return null;
 		}
-		return mapper.apply(author);
+		return authorMapper.apply(author);
 	}
 
 
@@ -61,11 +65,30 @@ public class AuthorService {
 		return true;
 	}
 
+	public AuthorResponseDTO findAuthorById(Long id) {
+		Author author = cacheService.getAuthor(id);
+
+		if (author == null) {
+			Optional<Author> optionalAuthor = authorRepository.findById(id);
+
+			if (optionalAuthor.isEmpty()) {
+				return null;
+			}
+
+			Author retrievedAuthor = optionalAuthor.get();
+
+			cacheService.addAuthor(retrievedAuthor);
+			logger.info("Author retrieved from repository and added to cache");
+			return authorMapper.apply(retrievedAuthor);
+		} else {
+			logger.info("Author retrieved from cache");
+		}
+
+		return authorMapper.apply(author);
+	}
 
 
-
-
-	public boolean deleteAuthorByName (String name) {
+	public boolean deleteAuthorByName(String name) {
 		Author author = authorRepository.findByName(name);
 		if (author != null) {
 			for (Book book : author.getBooks()) {

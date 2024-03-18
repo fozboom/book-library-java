@@ -1,6 +1,5 @@
 package com.daniel.projects.booklibrary.dto.book.title;
 
-import com.daniel.projects.booklibrary.dto.book.title.BookTitleDTO;
 import com.daniel.projects.booklibrary.model.Book;
 import org.springframework.stereotype.Component;
 

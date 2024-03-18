@@ -20,5 +20,18 @@ public class Author {
 
 	@ManyToMany(mappedBy = "authors")
 	private List<Book> books = new ArrayList<>();
+
+	public void addBook(Book book) {
+		if (this.books == null) {
+			this.books = new ArrayList<>();
+		}
+		this.books.add(book);
+	}
+
+	public void removeBook(Book book) {
+		if (this.books != null) {
+			this.books.remove(book);
+		}
+	}
 }
 

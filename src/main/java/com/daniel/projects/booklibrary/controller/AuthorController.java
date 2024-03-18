@@ -35,9 +35,18 @@ public class AuthorController {
 	}
 
 	@GetMapping("find")
-	public ResponseEntity<AuthorResponseDTO> findByName (@RequestParam String name) {
+	public ResponseEntity<AuthorResponseDTO> findByName(@RequestParam String name) {
 		AuthorResponseDTO author = service.findByName(name);
-		if(author == null) {
+		if (author == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(author);
+	}
+
+	@GetMapping("findById")
+	public ResponseEntity<AuthorResponseDTO> findAuthorById(@RequestParam Long id) {
+		AuthorResponseDTO author = service.findAuthorById(id);
+		if (author == null) {
 			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(author);
@@ -46,17 +55,17 @@ public class AuthorController {
 	@PutMapping("update")
 	ResponseEntity<String> updateBook(@RequestParam Long id, @RequestParam String name) {
 		boolean updated = service.updateAuthorName(id, name);
-		if(updated) {
+		if (updated) {
 			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
 		}
 		return new ResponseEntity<>("Author to update not found", HttpStatus.NOT_FOUND);
 	}
 
 	@DeleteMapping("/delete/{name}")
-	public ResponseEntity<String> deleteBookByName (@PathVariable String name) {
-		if(service.deleteAuthorByName(name)) {
-			return new ResponseEntity<>(SUCCESS_MESSAGE,HttpStatus.OK);
+	public ResponseEntity<String> deleteBookByName(@PathVariable String name) {
+		if (service.deleteAuthorByName(name)) {
+			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
 		}
-		return new ResponseEntity<>("Author not found",HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Author not found", HttpStatus.NOT_FOUND);
 	}
 }

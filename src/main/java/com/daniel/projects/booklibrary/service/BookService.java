@@ -1,7 +1,6 @@
 package com.daniel.projects.booklibrary.service;
 
 
-import com.daniel.projects.booklibrary.cache.InMemoryCache;
 import com.daniel.projects.booklibrary.dto.book.response.BookResponseDTO;
 import com.daniel.projects.booklibrary.dto.book.response.BookResponseDTOMapper;
 import com.daniel.projects.booklibrary.model.Author;
@@ -41,32 +40,16 @@ public class BookService {
 			return Optional.empty();
 		}
 
-		Publisher publisher = book.getPublisher();
-		Publisher existingPublisher = publisherRepository.findByName(publisher.getName());
+		handlePublisher(book);
+		handleAuthors(book);
 
-		if (existingPublisher != null) {
-			book.setPublisher(existingPublisher);
-		} else {
-			Publisher savedPublisher = publisherRepository.save(publisher);
-			book.setPublisher(savedPublisher);
-		}
+		Book savedBook = bookRepository.save(book);
+		cacheService.addBook(savedBook);
 
-		List<Author> authors = book.getAuthors();
-		List<Author> finalAuthors = new ArrayList<>();
+		updatePublisherInCache(savedBook);
+		updateAuthorsInCache(savedBook);
 
-		for (Author author : authors) {
-			Author existingAuthor = authorRepository.findByName(author.getName());
-			if (existingAuthor != null) {
-				finalAuthors.add(existingAuthor);
-			} else {
-				Author savedAuthor = authorRepository.save(author);
-				finalAuthors.add(savedAuthor);
-			}
-		}
-
-		book.setAuthors(finalAuthors);
-		cacheService.addBook(book);
-		return Optional.of(bookRepository.save(book));
+		return Optional.of(savedBook);
 	}
 
 
@@ -100,7 +83,7 @@ public class BookService {
 			logger.info("Book retrieved from repository and added to cache");
 			return mapper.apply(retrievedBook);
 		} else {
-			logger.info("Book with id retrieved from cache");
+			logger.info("Book retrieved from cache");
 		}
 
 		return mapper.apply(book);
@@ -124,14 +107,78 @@ public class BookService {
 	}
 
 	public boolean deleteBookByTitle(String title) {
-
 		Book book = bookRepository.findByTitle(title);
 
 		if (book != null) {
+			Publisher publisher = book.getPublisher();
+			if (publisher != null) {
+				publisher.removeBook(book);
+				publisherRepository.save(publisher);
+				cacheService.updatePublisher(publisher);
+			}
+
+			for (Author author : book.getAuthors()) {
+				Author authorInCache = cacheService.getAuthor(author.getId());
+				if (authorInCache != null) {
+					authorInCache.removeBook(book);
+					cacheService.updateAuthor(authorInCache);
+				}
+			}
+
 			bookRepository.delete(book);
 			cacheService.removeBook(book.getId());
+
 			return true;
 		}
+
 		return false;
+	}
+
+
+	private void handlePublisher(Book book) {
+		Publisher publisher = book.getPublisher();
+		Publisher existingPublisher = publisherRepository.findByName(publisher.getName());
+
+		if (existingPublisher != null) {
+			book.setPublisher(existingPublisher);
+		} else {
+			Publisher savedPublisher = publisherRepository.save(publisher);
+			book.setPublisher(savedPublisher);
+		}
+	}
+
+	private void handleAuthors(Book book) {
+		List<Author> authors = book.getAuthors();
+		List<Author> finalAuthors = new ArrayList<>();
+
+		for (Author author : authors) {
+			Author existingAuthor = authorRepository.findByName(author.getName());
+			if (existingAuthor != null) {
+				finalAuthors.add(existingAuthor);
+			} else {
+				Author savedAuthor = authorRepository.save(author);
+				finalAuthors.add(savedAuthor);
+			}
+		}
+
+		book.setAuthors(finalAuthors);
+	}
+
+	private void updatePublisherInCache(Book savedBook) {
+		Publisher publisherInCache = cacheService.getPublisher(savedBook.getPublisher().getId());
+		if (publisherInCache != null) {
+			publisherInCache.addBook(savedBook);
+			cacheService.updatePublisher(publisherInCache);
+		}
+	}
+
+	private void updateAuthorsInCache(Book savedBook) {
+		for (Author author : savedBook.getAuthors()) {
+			Author authorInCache = cacheService.getAuthor(author.getId());
+			if (authorInCache != null) {
+				authorInCache.addBook(savedBook);
+				cacheService.updateAuthor(authorInCache);
+			}
+		}
 	}
 }

@@ -15,8 +15,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/books")
 @AllArgsConstructor
-public class BookController
-{
+public class BookController {
 	private final BookService service;
 	private static final String SUCCESS_MESSAGE = "Success";
 
@@ -39,22 +38,22 @@ public class BookController
 	@GetMapping("findByTitle")
 	public ResponseEntity<BookResponseDTO> findByTitle(@RequestParam String bookName) {
 		BookResponseDTO book = service.findByTitle(bookName);
-		if(book == null) {
+		if (book == null) {
 			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(book);
 	}
 
 	@GetMapping("findByAuthorName")
-    public ResponseEntity<List<BookResponseDTO>> findByAuthorName(@RequestParam String authorName) {
+	public ResponseEntity<List<BookResponseDTO>> findByAuthorName(@RequestParam String authorName) {
 
-        return ResponseEntity.ok(service.findByAuthorName(authorName));
-    }
+		return ResponseEntity.ok(service.findByAuthorName(authorName));
+	}
 
 	@GetMapping("findById")
 	public ResponseEntity<BookResponseDTO> findById(@RequestParam Long id) {
 		BookResponseDTO book = service.findById(id);
-		if(book == null) {
+		if (book == null) {
 			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(book);
@@ -63,19 +62,17 @@ public class BookController
 	@PutMapping("update")
 	ResponseEntity<String> updateBook(@RequestParam Double price, @RequestParam String title) {
 		boolean updated = service.updateBook(price, title);
-		if(updated) {
-            return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
-        }
+		if (updated) {
+			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
+		}
 		return new ResponseEntity<>("Book to update not found", HttpStatus.NOT_FOUND);
 	}
 
 	@DeleteMapping("delete/{bookName}")
-	public ResponseEntity<String> deleteBookByTitle (@PathVariable String bookName) {
-		if(service.deleteBookByTitle(bookName)) {
-			return new ResponseEntity<>(SUCCESS_MESSAGE,HttpStatus.OK);
+	public ResponseEntity<String> deleteBookByTitle(@PathVariable String bookName) {
+		if (service.deleteBookByTitle(bookName)) {
+			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
 		}
-		return new ResponseEntity<>("Book not found",HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Book not found", HttpStatus.NOT_FOUND);
 	}
 }
-
-

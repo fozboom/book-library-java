@@ -2,6 +2,7 @@ package com.daniel.projects.booklibrary.controller;
 
 import com.daniel.projects.booklibrary.dto.publisher.response.PublisherResponseDTO;
 import com.daniel.projects.booklibrary.dto.publisher.save.PublisherSaveDTO;
+import com.daniel.projects.booklibrary.model.Fields;
 import com.daniel.projects.booklibrary.model.Publisher;
 import com.daniel.projects.booklibrary.service.PublisherService;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public class PublisherController {
 
 	private final PublisherService service;
-	private static final String SUCCESS_MESSAGE = "Success";
+
 
 	@GetMapping("get")
 	public List<PublisherResponseDTO> findAllPublishers() {
@@ -31,7 +32,7 @@ public class PublisherController {
 
 		Optional<Publisher> savedPublisher = service.addPublisher(publisher);
 		if (savedPublisher.isPresent()) {
-			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.CREATED);
+			return new ResponseEntity<>(Fields.SUCCESS_MESSAGE, HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>("Publisher with this title already exists", HttpStatus.BAD_REQUEST);
 		}
@@ -40,7 +41,16 @@ public class PublisherController {
 	@GetMapping("find")
 	public ResponseEntity<PublisherResponseDTO> findByName(@RequestParam String name) {
 		PublisherResponseDTO publisher = service.findByName(name);
-		if(publisher == null) {
+		if (publisher == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(publisher);
+	}
+
+	@GetMapping("findById")
+	public ResponseEntity<PublisherResponseDTO> findPublisherById(@RequestParam Long id) {
+		PublisherResponseDTO publisher = service.findPublisherById(id);
+		if (publisher == null) {
 			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(publisher);
@@ -49,17 +59,17 @@ public class PublisherController {
 	@PutMapping("update")
 	ResponseEntity<String> updateBook(@RequestParam Long id, @RequestParam String name) {
 		boolean updated = service.updatePublisherName(id, name);
-		if(updated) {
-			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
+		if (updated) {
+			return new ResponseEntity<>(Fields.SUCCESS_MESSAGE, HttpStatus.OK);
 		}
 		return new ResponseEntity<>("Publisher to update not found", HttpStatus.NOT_FOUND);
 	}
 
 	@DeleteMapping("delete/{publisherName}")
 	public ResponseEntity<String> deletePublisher(@PathVariable String publisherName) {
-		if(service.deletePublisherByName(publisherName)) {
-			return new ResponseEntity<>(SUCCESS_MESSAGE,HttpStatus.OK);
+		if (service.deletePublisherByName(publisherName)) {
+			return new ResponseEntity<>(Fields.SUCCESS_MESSAGE, HttpStatus.OK);
 		}
-		return new ResponseEntity<>("Publisher not found",HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Publisher not found", HttpStatus.NOT_FOUND);
 	}
 }
