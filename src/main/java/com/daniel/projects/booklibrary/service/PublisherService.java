@@ -25,7 +25,7 @@ public class PublisherService {
 	private final BookRepository bookRepository;
 	private final PublisherResponseDTOMapper publisherMapper;
 	private final CacheService cacheService;
-	private static final Logger logger = LoggerFactory.getLogger(BookService.class);
+	private static final Logger logger = LoggerFactory.getLogger(PublisherService.class);
 
 	public List<PublisherResponseDTO> findAllPublishers() {
 

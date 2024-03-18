@@ -24,7 +24,7 @@ public class AuthorService {
 	private final AuthorResponseDTOMapper authorMapper;
 	private final CacheService cacheService;
 
-	private static final Logger logger = LoggerFactory.getLogger(BookService.class);
+	private static final Logger logger = LoggerFactory.getLogger(AuthorService.class);
 
 
 	public List<AuthorResponseDTO> findAllAuthors() {
