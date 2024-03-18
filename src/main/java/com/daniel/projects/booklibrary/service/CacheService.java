@@ -19,6 +19,7 @@ public class CacheService {
 	private final PublisherCache publisherCache;
 
 
+
 	public void addBook(Book book) {
 
 		bookCache.put(Fields.bookPrefix + book.getId(), book);
