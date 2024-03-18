@@ -9,11 +9,11 @@ import com.daniel.projects.booklibrary.model.Publisher;
 import com.daniel.projects.booklibrary.repository.AuthorRepository;
 import com.daniel.projects.booklibrary.repository.BookRepository;
 import com.daniel.projects.booklibrary.repository.PublisherRepository;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -31,7 +31,7 @@ public class BookService {
 
 	public List<BookResponseDTO> findAllBooks() {
 
-		return bookRepository.findAll().stream().map(mapper).toList();
+		return bookRepository.findAllBooks().stream().map(mapper).toList();
 	}
 
 
@@ -71,7 +71,7 @@ public class BookService {
 		Book book = cacheService.getBook(id);
 
 		if (book == null) {
-			Optional<Book> optionalBook = bookRepository.findById(id);
+			Optional<Book> optionalBook = bookRepository.findBookById(id);
 
 			if (optionalBook.isEmpty()) {
 				return null;
@@ -111,20 +111,22 @@ public class BookService {
 
 		if (book != null) {
 			Publisher publisher = book.getPublisher();
+			List<Author> authors = new ArrayList<>(book.getAuthors());
+
 			if (publisher != null) {
 				publisher.removeBook(book);
 				publisherRepository.save(publisher);
 				cacheService.updatePublisher(publisher);
 			}
 
-			for (Author author : book.getAuthors()) {
-				Author authorInCache = cacheService.getAuthor(author.getId());
-				if (authorInCache != null) {
-					authorInCache.removeBook(book);
-					cacheService.updateAuthor(authorInCache);
-				}
+			for (Author author : authors) {
+				author.removeBook(book);
+				authorRepository.save(author);
+				cacheService.updateAuthor(author);
 			}
 
+			book.setAuthors(null);
+			book.setPublisher(null);
 			bookRepository.delete(book);
 			cacheService.removeBook(book.getId());
 
