@@ -10,15 +10,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class PublisherResponseDTOMapper implements Function<Publisher, PublisherResponseDTO> {
+public class PublisherResponseDTOMapper
+		implements Function<Publisher, PublisherResponseDTO> {
 	private final BookTitleDTOMapper bookMapper;
-	public PublisherResponseDTOMapper(BookTitleDTOMapper bookMapper) {
+	public PublisherResponseDTOMapper(final BookTitleDTOMapper mapper) {
 
-		this.bookMapper = bookMapper;
+		this.bookMapper = mapper;
 	}
 
 	@Override
-	public PublisherResponseDTO apply(Publisher publisher) {
+	public PublisherResponseDTO apply(final Publisher publisher) {
 		List<BookTitleDTO> bookDTOs = publisher.getBooks().stream()
 				.map(bookMapper)
 				.collect(Collectors.toList());

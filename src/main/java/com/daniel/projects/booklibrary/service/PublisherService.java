@@ -25,14 +25,18 @@ public class PublisherService {
 	private final BookRepository bookRepository;
 	private final PublisherResponseDTOMapper publisherMapper;
 	private final CacheService cacheService;
-	private static final Logger logger = LoggerFactory.getLogger(PublisherService.class);
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(PublisherService.class);
 
 	public List<PublisherResponseDTO> findAllPublishers() {
 
-		return publisherRepository.findAll().stream().map(publisherMapper).toList();
+		return publisherRepository.findAll()
+				.stream().map(publisherMapper)
+				.toList();
 	}
 
-	public Optional<Publisher> addPublisher(PublisherSaveDTO publisher) {
+	public Optional<Publisher> addPublisher(
+			final PublisherSaveDTO publisher) {
 		if (publisherRepository.existsByName(publisher.getName())) {
 			return Optional.empty();
 		}
@@ -44,7 +48,7 @@ public class PublisherService {
 	}
 
 
-	public PublisherResponseDTO findByName(String title) {
+	public PublisherResponseDTO findByName(final String title) {
 		Publisher publisher = publisherRepository.findByName(title);
 
 		if (publisher == null) {
@@ -54,11 +58,12 @@ public class PublisherService {
 		return publisherMapper.apply(publisher);
 	}
 
-	public PublisherResponseDTO findPublisherById(Long id) {
+	public PublisherResponseDTO findPublisherById(final Long id) {
 		Publisher publisher = cacheService.getPublisher(id);
 
 		if (publisher == null) {
-			Optional<Publisher> optionalPublisher = publisherRepository.findById(id);
+			Optional<Publisher> optionalPublisher =
+					publisherRepository.findById(id);
 
 			if (optionalPublisher.isEmpty()) {
 				return null;
@@ -67,18 +72,22 @@ public class PublisherService {
 			Publisher retrievedPublisher = optionalPublisher.get();
 
 			cacheService.addPublisher(retrievedPublisher);
-			logger.info("Publisher retrieved from repository and added to cache");
+			LOGGER.info("Publisher retrieved from "
+					+ "repository and added to cache");
 			return publisherMapper.apply(retrievedPublisher);
 		} else {
-			logger.info("Publisher retrieved from cache");
+			LOGGER.info("Publisher retrieved from cache");
 		}
 
 		return publisherMapper.apply(publisher);
 	}
 
 
-	public boolean updatePublisherName(Long id, String newName) {
-		Optional<Publisher> existingAuthorOptional = publisherRepository.findById(id);
+	public boolean updatePublisherName(
+			final Long id,
+			final String newName) {
+		Optional<Publisher> existingAuthorOptional =
+				publisherRepository.findById(id);
 		if (existingAuthorOptional.isEmpty()) {
 			return false;
 		}
@@ -90,7 +99,7 @@ public class PublisherService {
 		return true;
 	}
 
-	public boolean deletePublisherByName(String name) {
+	public boolean deletePublisherByName(final String name) {
 		Publisher publisher = publisherRepository.findByName(name);
 
 		if (publisher != null) {

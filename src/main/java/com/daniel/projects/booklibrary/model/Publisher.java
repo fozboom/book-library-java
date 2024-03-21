@@ -1,6 +1,13 @@
 package com.daniel.projects.booklibrary.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.GenerationType;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -15,20 +22,20 @@ public class Publisher {
 	private Long id;
 	@Column(unique = true)
 	private String name;
-
-	@OneToMany(mappedBy = "publisher", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToMany(mappedBy = "publisher",
+			cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private List<Book> books = new ArrayList<>();
 
 	private String address;
 
-	public void addBook(Book book) {
+	public void addBook(final Book book) {
 		if (this.books == null) {
 			this.books = new ArrayList<>();
 		}
 		this.books.add(book);
 	}
 
-	public void removeBook(Book book) {
+	public void removeBook(final Book book) {
 		if (this.books != null) {
 			this.books.remove(book);
 		}

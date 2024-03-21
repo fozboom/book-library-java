@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BookCache extends InMemoryCache<String, Book> {
-	public BookCache(@Value("${cache.maxSize}") Integer maxSize) {
+	public BookCache(@Value("${cache.maxSize}") final Integer maxSize) {
 
 		super(maxSize);
 	}

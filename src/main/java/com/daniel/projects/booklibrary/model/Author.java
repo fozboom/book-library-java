@@ -1,7 +1,13 @@
 package com.daniel.projects.booklibrary.model;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.ManyToMany;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -21,14 +27,14 @@ public class Author {
 	@ManyToMany(mappedBy = "authors")
 	private List<Book> books = new ArrayList<>();
 
-	public void addBook(Book book) {
+	public void addBook(final Book book) {
 		if (this.books == null) {
 			this.books = new ArrayList<>();
 		}
 		this.books.add(book);
 	}
 
-	public void removeBook(Book book) {
+	public void removeBook(final Book book) {
 		if (this.books != null) {
 			this.books.remove(book);
 		}

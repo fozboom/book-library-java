@@ -27,15 +27,17 @@ public class BookService {
 	private final AuthorRepository authorRepository;
 	private final PublisherRepository publisherRepository;
 	private final BookResponseDTOMapper mapper;
-	private static final Logger logger = LoggerFactory.getLogger(BookService.class);
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(BookService.class);
 
 	public List<BookResponseDTO> findAllBooks() {
 
-		return bookRepository.findAllBooks().stream().map(mapper).toList();
+		return bookRepository.findAllBooks()
+				.stream().map(mapper).toList();
 	}
 
 
-	public Optional<Book> addBook(Book book) {
+	public Optional<Book> addBook(final Book book) {
 		if (bookRepository.existsByTitle(book.getTitle())) {
 			return Optional.empty();
 		}
@@ -53,7 +55,7 @@ public class BookService {
 	}
 
 
-	public BookResponseDTO findByTitle(String title) {
+	public BookResponseDTO findByTitle(final String title) {
 		Book book = bookRepository.findByTitle(title);
 
 		if (book == null) {
@@ -61,17 +63,19 @@ public class BookService {
 		}
 		if (cacheService.getBook(book.getId()) == null) {
 			cacheService.addBook(book);
-			logger.info("Book retrieved from repository and added to cache");
+			LOGGER.info("Book retrieved from "
+					+ "repository and added to cache");
 		}
 		return mapper.apply(book);
 	}
 
 
-	public BookResponseDTO findById(Long id) {
+	public BookResponseDTO findById(final Long id) {
 		Book book = cacheService.getBook(id);
 
 		if (book == null) {
-			Optional<Book> optionalBook = bookRepository.findBookById(id);
+			Optional<Book> optionalBook =
+					bookRepository.findBookById(id);
 
 			if (optionalBook.isEmpty()) {
 				return null;
@@ -80,22 +84,25 @@ public class BookService {
 			Book retrievedBook = optionalBook.get();
 
 			cacheService.addBook(retrievedBook);
-			logger.info("Book retrieved from repository and added to cache");
+			LOGGER.info("Book retrieved from "
+					+ "repository and added to cache");
 			return mapper.apply(retrievedBook);
 		} else {
-			logger.info("Book retrieved from cache");
+			LOGGER.info("Book retrieved from cache");
 		}
 
 		return mapper.apply(book);
 	}
 
-	public List<BookResponseDTO> findByAuthorName(String author) {
+	public List<BookResponseDTO> findByAuthorName(final String author) {
 		List<Book> books = bookRepository.findByAuthorName(author);
 		return books.stream().map(mapper).toList();
 	}
 
 
-	public boolean updateBook(Double price, String title) {
+	public boolean updateBook(
+			final Double price,
+			final String title) {
 		Book book = bookRepository.findByTitle(title);
 		if (book == null) {
 			return false;
@@ -106,12 +113,15 @@ public class BookService {
 		return true;
 	}
 
-	public boolean deleteBookByTitle(String title) {
+	public boolean deleteBookByTitle(final String title) {
 		Book book = bookRepository.findByTitle(title);
 
 		if (book != null) {
+			cacheService.removeBook(book.getId());
+
 			Publisher publisher = book.getPublisher();
-			List<Author> authors = new ArrayList<>(book.getAuthors());
+			List<Author> authors =
+					new ArrayList<>(book.getAuthors());
 
 			if (publisher != null) {
 				publisher.removeBook(book);
@@ -128,7 +138,6 @@ public class BookService {
 			book.setAuthors(null);
 			book.setPublisher(null);
 			bookRepository.delete(book);
-			cacheService.removeBook(book.getId());
 
 			return true;
 		}
@@ -137,28 +146,35 @@ public class BookService {
 	}
 
 
-	private void handlePublisher(Book book) {
+	private void handlePublisher(final Book book) {
 		Publisher publisher = book.getPublisher();
-		Publisher existingPublisher = publisherRepository.findByName(publisher.getName());
+		Publisher existingPublisher =
+				publisherRepository
+						.findByName(publisher
+								.getName());
 
 		if (existingPublisher != null) {
 			book.setPublisher(existingPublisher);
 		} else {
-			Publisher savedPublisher = publisherRepository.save(publisher);
+			Publisher savedPublisher =
+					publisherRepository.save(publisher);
 			book.setPublisher(savedPublisher);
 		}
 	}
 
-	private void handleAuthors(Book book) {
+	private void handleAuthors(final Book book) {
 		List<Author> authors = book.getAuthors();
 		List<Author> finalAuthors = new ArrayList<>();
 
 		for (Author author : authors) {
-			Author existingAuthor = authorRepository.findByName(author.getName());
+			Author existingAuthor =
+					authorRepository.findByName(
+							author.getName());
 			if (existingAuthor != null) {
 				finalAuthors.add(existingAuthor);
 			} else {
-				Author savedAuthor = authorRepository.save(author);
+				Author savedAuthor =
+						authorRepository.save(author);
 				finalAuthors.add(savedAuthor);
 			}
 		}
@@ -166,17 +182,21 @@ public class BookService {
 		book.setAuthors(finalAuthors);
 	}
 
-	private void updatePublisherInCache(Book savedBook) {
-		Publisher publisherInCache = cacheService.getPublisher(savedBook.getPublisher().getId());
+	private void updatePublisherInCache(final Book savedBook) {
+		Publisher publisherInCache =
+				cacheService.getPublisher(
+						savedBook.getPublisher()
+								.getId());
 		if (publisherInCache != null) {
 			publisherInCache.addBook(savedBook);
 			cacheService.updatePublisher(publisherInCache);
 		}
 	}
 
-	private void updateAuthorsInCache(Book savedBook) {
+	private void updateAuthorsInCache(final Book savedBook) {
 		for (Author author : savedBook.getAuthors()) {
-			Author authorInCache = cacheService.getAuthor(author.getId());
+			Author authorInCache =
+					cacheService.getAuthor(author.getId());
 			if (authorInCache != null) {
 				authorInCache.addBook(savedBook);
 				cacheService.updateAuthor(authorInCache);

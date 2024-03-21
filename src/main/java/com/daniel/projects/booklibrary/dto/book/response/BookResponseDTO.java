@@ -18,3 +18,4 @@ public class BookResponseDTO {
 	private PublisherWithoutBooksDTO publisher;
 	private Double price;
 }
+

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuthorCache extends InMemoryCache<String, Author> {
-	public AuthorCache(@Value("${cache.maxSize}") Integer maxSize) {
+	public AuthorCache(@Value("${cache.maxSize}") final Integer maxSize) {
 		super(maxSize);
 	}
 }

@@ -8,13 +8,16 @@ import java.util.List;
 import java.util.function.Function;
 
 @Component
-public class AuthorResponseDTOMapper implements Function<Author, AuthorResponseDTO> {
+public class AuthorResponseDTOMapper
+		implements Function<Author, AuthorResponseDTO> {
 	@Override
-	public AuthorResponseDTO apply(Author author) {
+	public AuthorResponseDTO apply(final Author author) {
 		List<BookTitleDTO> bookTitleDTOs = author.getBooks().stream()
-				.map(book -> new BookTitleDTO(book.getTitle())).toList();
+				.map(book -> new BookTitleDTO(book
+						.getTitle())).toList();
 
-		return new AuthorResponseDTO(author.getId(), author.getName(), bookTitleDTOs);
+		return new AuthorResponseDTO(author.getId(),
+				author.getName(), bookTitleDTOs);
 	}
 
 

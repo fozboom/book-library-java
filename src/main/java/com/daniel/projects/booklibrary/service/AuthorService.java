@@ -24,16 +24,18 @@ public class AuthorService {
 	private final AuthorResponseDTOMapper authorMapper;
 	private final CacheService cacheService;
 
-	private static final Logger logger = LoggerFactory.getLogger(AuthorService.class);
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(AuthorService.class);
 
 
 	public List<AuthorResponseDTO> findAllAuthors() {
 
-		return authorRepository.findAll().stream().map(authorMapper).toList();
+		return authorRepository.findAll()
+				.stream().map(authorMapper).toList();
 	}
 
 
-	public Optional<Author> addAuthor(Author author) {
+	public Optional<Author> addAuthor(final Author author) {
 		if (authorRepository.existsByName(author.getName())) {
 			return Optional.empty();
 		}
@@ -42,7 +44,7 @@ public class AuthorService {
 	}
 
 
-	public AuthorResponseDTO findByName(String name) {
+	public AuthorResponseDTO findByName(final String name) {
 
 		Author author = authorRepository.findAuthorByName(name);
 		if (author == null) {
@@ -52,8 +54,9 @@ public class AuthorService {
 	}
 
 
-	public boolean updateAuthorName(Long id, String newName) {
-		Optional<Author> existingAuthorOptional = authorRepository.findById(id);
+	public boolean updateAuthorName(final Long id, final String newName) {
+		Optional<Author> existingAuthorOptional =
+				authorRepository.findById(id);
 		if (existingAuthorOptional.isEmpty()) {
 			return false;
 		}
@@ -65,11 +68,12 @@ public class AuthorService {
 		return true;
 	}
 
-	public AuthorResponseDTO findAuthorById(Long id) {
+	public AuthorResponseDTO findAuthorById(final Long id) {
 		Author author = cacheService.getAuthor(id);
 
 		if (author == null) {
-			Optional<Author> optionalAuthor = authorRepository.findById(id);
+			Optional<Author> optionalAuthor =
+					authorRepository.findById(id);
 
 			if (optionalAuthor.isEmpty()) {
 				return null;
@@ -78,17 +82,18 @@ public class AuthorService {
 			Author retrievedAuthor = optionalAuthor.get();
 
 			cacheService.addAuthor(retrievedAuthor);
-			logger.info("Author retrieved from repository and added to cache");
+			LOGGER.info("Author retrieved from "
+					+ "repository and added to cache");
 			return authorMapper.apply(retrievedAuthor);
 		} else {
-			logger.info("Author retrieved from cache");
+			LOGGER.info("Author retrieved from cache");
 		}
 
 		return authorMapper.apply(author);
 	}
 
 
-	public boolean deleteAuthorByName(String name) {
+	public boolean deleteAuthorByName(final String name) {
 		Author author = authorRepository.findByName(name);
 		if (author != null) {
 			for (Book book : author.getBooks()) {

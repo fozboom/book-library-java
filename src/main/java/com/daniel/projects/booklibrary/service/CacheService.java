@@ -20,37 +20,38 @@ public class CacheService {
 
 
 
-	public void addBook(Book book) {
+	public void addBook(final Book book) {
 
 		bookCache.put(Fields.BOOK_PREFIX + book.getId(), book);
 	}
 
-	public void addAuthor(Author author) {
+	public void addAuthor(final Author author) {
 
 		authorCache.put(Fields.AUTHOR_PREFIX + author.getId(), author);
 	}
 
-	public void addPublisher(Publisher publisher) {
+	public void addPublisher(final Publisher publisher) {
 
-		publisherCache.put(Fields.PUBLISHER_PREFIX + publisher.getId(), publisher);
+		publisherCache.put(Fields.PUBLISHER_PREFIX
+				+ publisher.getId(), publisher);
 	}
 
-	public Book getBook(Long id) {
+	public Book getBook(final Long id) {
 
 		return bookCache.get(Fields.BOOK_PREFIX + id);
 	}
 
-	public Author getAuthor(Long id) {
+	public Author getAuthor(final Long id) {
 
 		return authorCache.get(Fields.AUTHOR_PREFIX + id);
 	}
 
-	public Publisher getPublisher(Long id) {
+	public Publisher getPublisher(final Long id) {
 
 		return publisherCache.get(Fields.PUBLISHER_PREFIX + id);
 	}
 
-	public void removeBook(Long id) {
+	public void removeBook(final Long id) {
 		Book book = getBook(id);
 		if (book != null) {
 			for (Author author : book.getAuthors()) {
@@ -62,7 +63,8 @@ public class CacheService {
 			}
 			Publisher publisher = book.getPublisher();
 			if (publisher != null) {
-				Publisher cachedPublisher = getPublisher(publisher.getId());
+				Publisher cachedPublisher =
+						getPublisher(publisher.getId());
 				if (cachedPublisher != null) {
 					cachedPublisher.getBooks().remove(book);
 					addPublisher(cachedPublisher);
@@ -72,9 +74,11 @@ public class CacheService {
 		}
 	}
 
-	public void removeAuthor(Long id) {
+	public void removeAuthor(final Long id) {
 		for (Book book : bookCache.values()) {
-			if (book.getAuthors().removeIf(authorInBook -> authorInBook.getId().equals(id))) {
+			if (book.getAuthors().removeIf(
+					authorInBook -> authorInBook.getId()
+							.equals(id))) {
 				updateBook(book);
 			}
 		}
@@ -82,9 +86,11 @@ public class CacheService {
 		authorCache.remove(Fields.AUTHOR_PREFIX + id);
 	}
 
-	public void removePublisher(Long id) {
+	public void removePublisher(final Long id) {
 		for (Book book : bookCache.values()) {
-			if (book.getPublisher() != null && book.getPublisher().getId().equals(id)) {
+			if (book.getPublisher() != null
+					&& book.getPublisher().getId()
+					.equals(id)) {
 				book.setPublisher(null);
 				updateBook(book);
 			}
@@ -93,11 +99,12 @@ public class CacheService {
 		publisherCache.remove(Fields.PUBLISHER_PREFIX + id);
 	}
 
-	public void updateAuthor(Author author) {
+	public void updateAuthor(final Author author) {
 		for (Book book : bookCache.values()) {
 			for (Author bookAuthor : book.getAuthors()) {
 				if (bookAuthor.getId().equals(author.getId())) {
-					int index = book.getAuthors().indexOf(bookAuthor);
+					int index = book.getAuthors()
+							.indexOf(bookAuthor);
 					book.getAuthors().set(index, author);
 					updateBook(book);
 					break;
@@ -108,9 +115,11 @@ public class CacheService {
 		addAuthor(author);
 	}
 
-	public void updatePublisher(Publisher publisher) {
+	public void updatePublisher(final Publisher publisher) {
 		for (Book book : bookCache.values()) {
-			if (book.getPublisher() != null && book.getPublisher().getId().equals(publisher.getId())) {
+			if (book.getPublisher() != null
+					&& book.getPublisher().getId()
+					.equals(publisher.getId())) {
 				book.setPublisher(publisher);
 				updateBook(book);
 			}
@@ -119,7 +128,7 @@ public class CacheService {
 		addPublisher(publisher);
 	}
 
-	public void updateBook(Book book) {
+	public void updateBook(final Book book) {
 		Book cachedBook = getBook(book.getId());
 		if (cachedBook != null) {
 			updatePublisher(cachedBook, book);
@@ -128,17 +137,22 @@ public class CacheService {
 		addBook(book);
 	}
 
-	private void updatePublisher(Book cachedBook, Book book) {
+	private void updatePublisher(final Book cachedBook, final Book book) {
 		Publisher publisher = cachedBook.getPublisher();
 		if (publisher != null) {
-			Publisher cachedPublisher = getPublisher(publisher.getId());
+			Publisher cachedPublisher =
+					getPublisher(publisher.getId());
 			if (cachedPublisher != null) {
-				replaceBookInPublisher(cachedPublisher, cachedBook, book);
+				replaceBookInPublisher(cachedPublisher,
+						cachedBook, book);
 			}
 		}
 	}
 
-	private void replaceBookInPublisher(Publisher publisher, Book oldBook, Book newBook) {
+	private void replaceBookInPublisher(
+			final Publisher publisher,
+			final Book oldBook,
+			final Book newBook) {
 		int index = publisher.getBooks().indexOf(oldBook);
 		if (index != -1) {
 			publisher.getBooks().set(index, newBook);
@@ -146,16 +160,23 @@ public class CacheService {
 		}
 	}
 
-	private void updateAuthors(Book cachedBook, Book book) {
+	private void updateAuthors(
+			final Book cachedBook,
+			final Book book) {
 		for (Author author : cachedBook.getAuthors()) {
-			Author cachedAuthor = getAuthor(author.getId());
+			Author cachedAuthor =
+					getAuthor(author.getId());
 			if (cachedAuthor != null) {
-				replaceBookInAuthor(cachedAuthor, cachedBook, book);
+				replaceBookInAuthor(cachedAuthor,
+						cachedBook, book);
 			}
 		}
 	}
 
-	private void replaceBookInAuthor(Author author, Book oldBook, Book newBook) {
+	private void replaceBookInAuthor(
+			final Author author,
+			final Book oldBook,
+			final Book newBook) {
 		int index = author.getBooks().indexOf(oldBook);
 		if (index != -1) {
 			author.getBooks().set(index, newBook);

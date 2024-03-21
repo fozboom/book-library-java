@@ -1,12 +1,14 @@
 package com.daniel.projects.booklibrary;
 
+import lombok.AllArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
 @SpringBootApplication
-public class BooklibraryApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(BooklibraryApplication.class, args);
+public class BookLibraryApplication {
+	public static void main(final String[] args) {
+		SpringApplication.run(BookLibraryApplication.class, args);
 	}
 
 }

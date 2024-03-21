@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthorNameDTO {
-	Long id;
+	private Long id;
 	private String name;
 }
+

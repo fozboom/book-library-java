@@ -11,7 +11,8 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
 
 	boolean existsByName(String name);
 
-	@Query(value = "SELECT * FROM author WHERE name = :name", nativeQuery = true)
+	@Query(value = "SELECT * FROM author "
+			+ "WHERE name = :name", nativeQuery = true)
 	Author findAuthorByName(@Param("name") String name);
 
 }

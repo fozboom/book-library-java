@@ -4,9 +4,11 @@ import com.daniel.projects.booklibrary.model.Publisher;
 
 import java.util.function.Function;
 
-public class PublisherSaveDTOMapper implements Function<Publisher, PublisherSaveDTO> {
+public class PublisherSaveDTOMapper
+		implements Function<Publisher, PublisherSaveDTO> {
 	@Override
-    public PublisherSaveDTO apply(Publisher publisher) {
-        return new PublisherSaveDTO(publisher.getName(), publisher.getAddress());
+    public PublisherSaveDTO apply(final Publisher publisher) {
+        return new PublisherSaveDTO(publisher.getName(),
+				publisher.getAddress());
     }
 }
