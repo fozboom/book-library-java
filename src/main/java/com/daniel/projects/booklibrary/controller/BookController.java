@@ -31,23 +31,18 @@ public class BookController {
 
 	@Operation(summary = "Save book")
 	@PostMapping("save")
-	public ResponseEntity<String> addBook(
-			@RequestBody final Book book) {
+	public ResponseEntity<String> addBook(@RequestBody final Book book) {
 		Optional<Book> savedBook = service.addBook(book);
 		if (savedBook.isPresent()) {
-			return new ResponseEntity<>(
-					SUCCESS_MESSAGE, HttpStatus.CREATED);
+			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.CREATED);
 		} else {
-			return new ResponseEntity<>(
-					"Book with this title already exists",
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Book with this title already exists", HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@Operation(summary = "Get book by title")
 	@GetMapping("findByTitle")
-	public ResponseEntity<BookResponseDTO> findByTitle(
-			@RequestParam final String bookName) {
+	public ResponseEntity<BookResponseDTO> findByTitle(@RequestParam final String bookName) {
 		BookResponseDTO book = service.findByTitle(bookName);
 		if (book == null) {
 			return ResponseEntity.notFound().build();
@@ -57,16 +52,14 @@ public class BookController {
 
 	@Operation(summary = "Get book by AuthorName")
 	@GetMapping("findByAuthorName")
-	public ResponseEntity<List<BookResponseDTO>> findByAuthorName(
-			@RequestParam final String authorName) {
+	public ResponseEntity<List<BookResponseDTO>> findByAuthorName(@RequestParam final String authorName) {
 
 		return ResponseEntity.ok(service.findByAuthorName(authorName));
 	}
 
 	@Operation(summary = "Get book by id")
 	@GetMapping("findById")
-	public ResponseEntity<BookResponseDTO> findById(
-			@RequestParam final Long id) {
+	public ResponseEntity<BookResponseDTO> findById(@RequestParam final Long id) {
 		BookResponseDTO book = service.findById(id);
 		if (book == null) {
 			return ResponseEntity.notFound().build();
@@ -76,28 +69,20 @@ public class BookController {
 
 	@Operation(summary = "Update book")
 	@PutMapping("update")
-	ResponseEntity<String> updateBook(
-			@RequestParam final Double price,
-			@RequestParam final String title) {
+	ResponseEntity<String> updateBook(@RequestParam final Double price, @RequestParam final String title) {
 		boolean updated = service.updateBook(price, title);
 		if (updated) {
-			return new ResponseEntity<>(
-					SUCCESS_MESSAGE, HttpStatus.OK);
+			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(
-				"Book to update not found",
-				HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Book to update not found", HttpStatus.NOT_FOUND);
 	}
 
 	@Operation(summary = "Delete book by title")
 	@DeleteMapping("delete/{bookName}")
-	public ResponseEntity<String> deleteBookByTitle(
-			@PathVariable final String bookName) {
+	public ResponseEntity<String> deleteBookByTitle(@PathVariable final String bookName) {
 		if (service.deleteBookByTitle(bookName)) {
-			return new ResponseEntity<>(
-					SUCCESS_MESSAGE, HttpStatus.OK);
+			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(
-				"Book not found", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Book not found", HttpStatus.NOT_FOUND);
 	}
 }

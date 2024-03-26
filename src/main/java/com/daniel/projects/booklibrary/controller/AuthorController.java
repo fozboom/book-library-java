@@ -30,23 +30,18 @@ public class AuthorController {
 
 	@Operation(summary = "Save author")
 	@PostMapping("save")
-	public ResponseEntity<String> addAuthor(
-			@RequestBody final Author author) {
+	public ResponseEntity<String> addAuthor(@RequestBody final Author author) {
 		Optional<Author> savedBook = service.addAuthor(author);
 		if (savedBook.isPresent()) {
-			return new ResponseEntity<>(Fields.SUCCESS_MESSAGE,
-					HttpStatus.CREATED);
+			return new ResponseEntity<>(Fields.SUCCESS_MESSAGE, HttpStatus.CREATED);
 		} else {
-			return new ResponseEntity<>(
-					"Book with this title already exists",
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Book with this title already exists", HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@Operation(summary = "Get author by name")
 	@GetMapping("find")
-	public ResponseEntity<AuthorResponseDTO> findByName(
-			@RequestParam final String name) {
+	public ResponseEntity<AuthorResponseDTO> findByName(@RequestParam final String name) {
 		AuthorResponseDTO author = service.findByName(name);
 		if (author == null) {
 			return ResponseEntity.notFound().build();
@@ -56,8 +51,7 @@ public class AuthorController {
 
 	@Operation(summary = "Get author by id")
 	@GetMapping("findById")
-	public ResponseEntity<AuthorResponseDTO> findAuthorById(
-			@RequestParam final Long id) {
+	public ResponseEntity<AuthorResponseDTO> findAuthorById(@RequestParam final Long id) {
 		AuthorResponseDTO author = service.findAuthorById(id);
 		if (author == null) {
 			return ResponseEntity.notFound().build();
@@ -67,28 +61,20 @@ public class AuthorController {
 
 	@Operation(summary = "Update author")
 	@PutMapping("update")
-	ResponseEntity<String> updateBook(
-			@RequestParam final Long id,
-			@RequestParam final String name) {
+	ResponseEntity<String> updateBook(@RequestParam final Long id, @RequestParam final String name) {
 		boolean updated = service.updateAuthorName(id, name);
 		if (updated) {
-			return new ResponseEntity<>(
-					Fields.SUCCESS_MESSAGE, HttpStatus.OK);
+			return new ResponseEntity<>(Fields.SUCCESS_MESSAGE, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(
-				"Author to update not found",
-				HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Author to update not found", HttpStatus.NOT_FOUND);
 	}
 
 	@Operation(summary = "Delete author by name")
 	@DeleteMapping("/delete/{name}")
-	public ResponseEntity<String> deleteBookByName(
-			@PathVariable final String name) {
+	public ResponseEntity<String> deleteBookByName(@PathVariable final String name) {
 		if (service.deleteAuthorByName(name)) {
-			return new ResponseEntity<>(
-					Fields.SUCCESS_MESSAGE, HttpStatus.OK);
+			return new ResponseEntity<>(Fields.SUCCESS_MESSAGE, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(
-				"Author not found", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Author not found", HttpStatus.NOT_FOUND);
 	}
 }
