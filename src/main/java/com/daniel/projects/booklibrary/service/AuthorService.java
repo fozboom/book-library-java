@@ -2,6 +2,8 @@ package com.daniel.projects.booklibrary.service;
 
 import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTO;
 import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTOMapper;
+import com.daniel.projects.booklibrary.exception.ResourceAlreadyExistsException;
+import com.daniel.projects.booklibrary.exception.ResourceNotFoundException;
 import com.daniel.projects.booklibrary.model.Author;
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.repository.AuthorRepository;
@@ -24,66 +26,49 @@ public class AuthorService {
 	private final AuthorResponseDTOMapper authorMapper;
 	private final CacheService cacheService;
 
-	private static final Logger LOGGER =
-			LoggerFactory.getLogger(AuthorService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorService.class);
 
 
 	public List<AuthorResponseDTO> findAllAuthors() {
 
-		return authorRepository.findAll()
-				.stream().map(authorMapper).toList();
+		return authorRepository.findAll().stream().map(authorMapper).toList();
 	}
 
 
-	public Optional<Author> addAuthor(final Author author) {
+	public Author addAuthor(final Author author) {
 		if (authorRepository.existsByName(author.getName())) {
-			return Optional.empty();
+			throw new ResourceAlreadyExistsException("Author with this name already exists");
 		}
 		cacheService.addAuthor(author);
-		return Optional.of(authorRepository.save(author));
+		return authorRepository.save(author);
 	}
 
 
 	public AuthorResponseDTO findByName(final String name) {
-
-		Author author = authorRepository.findAuthorByName(name);
-		if (author == null) {
-			return null;
-		}
+		Author author = authorRepository.findAuthorByName(name)
+				.orElseThrow(() -> new ResourceNotFoundException("Author not found with name: " + name));
 		return authorMapper.apply(author);
 	}
 
 
-	public boolean updateAuthorName(final Long id, final String newName) {
-		Optional<Author> existingAuthorOptional =
-				authorRepository.findById(id);
-		if (existingAuthorOptional.isEmpty()) {
-			return false;
-		}
-
-		Author existingAuthor = existingAuthorOptional.get();
+	public void updateAuthorName(final Long id, final String newName) {
+		Author existingAuthor = authorRepository.findAuthorById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id));
 		existingAuthor.setName(newName);
 		authorRepository.save(existingAuthor);
 		cacheService.updateAuthor(existingAuthor);
-		return true;
 	}
 
 	public AuthorResponseDTO findAuthorById(final Long id) {
 		Author author = cacheService.getAuthor(id);
 
 		if (author == null) {
-			Optional<Author> optionalAuthor =
-					authorRepository.findById(id);
+			Author retrievedAuthor = authorRepository.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id));
 
-			if (optionalAuthor.isEmpty()) {
-				return null;
-			}
-
-			Author retrievedAuthor = optionalAuthor.get();
 
 			cacheService.addAuthor(retrievedAuthor);
-			LOGGER.info("Author retrieved from "
-					+ "repository and added to cache");
+			LOGGER.info("Author retrieved from " + "repository and added to cache");
 			return authorMapper.apply(retrievedAuthor);
 		} else {
 			LOGGER.info("Author retrieved from cache");
@@ -93,17 +78,14 @@ public class AuthorService {
 	}
 
 
-	public boolean deleteAuthorByName(final String name) {
-		Author author = authorRepository.findByName(name);
-		if (author != null) {
-			for (Book book : author.getBooks()) {
-				book.getAuthors().remove(author);
-				bookRepository.save(book);
-			}
-			authorRepository.delete(author);
-			cacheService.removeAuthor(author.getId());
-			return true;
+	public void deleteAuthorByName(final String name) {
+		Author author = authorRepository.findAuthorByName(name)
+				.orElseThrow(() -> new ResourceNotFoundException("Author not found with name: " + name));
+		for (Book book : author.getBooks()) {
+			book.getAuthors().remove(author);
+			bookRepository.save(book);
 		}
-		return false;
+		authorRepository.delete(author);
+		cacheService.removeAuthor(author.getId());
 	}
 }
