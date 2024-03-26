@@ -14,7 +14,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.Date;
 
 @ControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
+
 	@ExceptionHandler({HttpClientErrorException.class})
 	public ResponseEntity<ErrorMessage> handleHttpClientErrorException(final HttpClientErrorException ex,
 																 final WebRequest request) {
@@ -64,5 +65,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-
+	@ExceptionHandler({ResourceAlreadyExistsException.class})
+	public ResponseEntity<ErrorMessage> handleResourceAlreadyExistsException(final ResourceAlreadyExistsException ex,
+																			final WebRequest request) {
+		ErrorMessage errorMessage = new ErrorMessage(HttpStatus.CONFLICT.value(),
+				new Date(),
+				"Resource already exists: " + ex.getMessage(),
+				request.getDescription(false));
+		return new ResponseEntity<>(errorMessage, HttpStatus.CONFLICT);
+	}
 }

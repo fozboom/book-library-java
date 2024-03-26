@@ -8,6 +8,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToMany;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ public class Author {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotBlank(message = "Author name is mandatory")
+	@Size(min = 3, max = 50, message = "Author name must be between 3 and 50 characters")
 	@Column(unique = true)
 	private String name;
 

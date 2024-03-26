@@ -7,7 +7,7 @@ public class ResourceAlreadyExistsException extends RuntimeException {
 	@Serial
 	private static final long serialVersionUID = 1L;
 
-	public ResourceAlreadyExistsException(String message) {
+	public ResourceAlreadyExistsException(final String message) {
 		super(message);
 	}
-};
+}
