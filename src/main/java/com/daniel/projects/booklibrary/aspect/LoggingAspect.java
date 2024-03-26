@@ -20,13 +20,13 @@ public class LoggingAspect {
 	@AfterThrowing(pointcut = "logServiceMethods()", throwing = "exception")
 	public void logException(JoinPoint joinPoint, Throwable exception) {
 		String methodName = joinPoint.getSignature().getName();
-		LOGGER.error("Exception thrown in method: " + methodName + " with message: " + exception.getMessage());
+		LOGGER.error("Exception thrown in method: {} with message: {}", methodName, exception.getMessage());
 	}
 
 	@Before("logServiceMethods()")
 	public void logMethodCall(JoinPoint joinPoint) {
 		String methodName = joinPoint.getSignature().getName();
-		LOGGER.info("Method called: " + methodName);
+		LOGGER.info("Method called: {}", methodName);
 	}
 
 	@Around("logServiceMethods()")
@@ -37,7 +37,7 @@ public class LoggingAspect {
 
 		long executionTime = System.currentTimeMillis() - start;
 
-		LOGGER.info(joinPoint.getSignature() + " executed in " + executionTime + "ms");
+		LOGGER.info("{} executed in {}ms", joinPoint.getSignature(), executionTime);
 
 		return proceed;
 	}
@@ -45,7 +45,7 @@ public class LoggingAspect {
 	@AfterReturning(pointcut = "logServiceMethods()", returning = "result")
 	public void logMethodReturn(JoinPoint joinPoint, Object result) {
 		String methodName = joinPoint.getSignature().getName();
-		LOGGER.info("Method return: " + methodName + " returned " + result);
+		LOGGER.info("Method return: {} returned {}", methodName, result);
 	}
 
 
