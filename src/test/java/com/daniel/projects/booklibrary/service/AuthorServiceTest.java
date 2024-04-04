@@ -155,7 +155,7 @@ class AuthorServiceTest {
 	}
 
 	@Test
-	public void testFindAuthorByIdFromCache() {
+	void testFindAuthorByIdFromCache() {
 		when(cacheService.getAuthor(author.getId())).thenReturn(author);
 		when(authorMapper.apply(author)).thenReturn(new AuthorResponseDTO());
 
