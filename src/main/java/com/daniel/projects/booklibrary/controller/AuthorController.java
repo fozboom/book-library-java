@@ -1,5 +1,6 @@
 package com.daniel.projects.booklibrary.controller;
 
+import com.daniel.projects.booklibrary.dto.author.name.AuthorNameDTO;
 import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTO;
 import com.daniel.projects.booklibrary.model.Author;
 import com.daniel.projects.booklibrary.service.AuthorService;
@@ -31,9 +32,16 @@ public class AuthorController {
 
 	@Operation(summary = "Save author")
 	@PostMapping("save")
-	public ResponseEntity<String> addAuthor(@Valid @RequestBody final Author author) {
-		service.addAuthor(author);
-		return new ResponseEntity<>("Author added successfully", HttpStatus.CREATED);
+	public ResponseEntity<Author> addAuthor(@Valid @RequestBody final AuthorNameDTO authorName) {
+		Author author = service.addAuthor(authorName);
+		return new ResponseEntity<>(author, HttpStatus.CREATED);
+	}
+
+	@Operation(summary = "Save collection of authors")
+	@PostMapping("saveCollection")
+	public ResponseEntity<List<Author>> addAuthors(@Valid @RequestBody final List<AuthorNameDTO> authorNames) {
+		List<Author> savedAuthors = service.addAuthors(authorNames);
+		return new ResponseEntity<>(savedAuthors, HttpStatus.CREATED);
 	}
 
 	@Operation(summary = "Get author by name")

@@ -1,8 +1,7 @@
-package com.daniel.projects.booklibrary.dto.book.response;
+package com.daniel.projects.booklibrary.mapper;
 
 
-import com.daniel.projects.booklibrary.dto.publisher.withoutbooks.PublisherWithoutBooksDTOMapper;
-import com.daniel.projects.booklibrary.dto.author.name.AuthorNameDTOMapper;
+import com.daniel.projects.booklibrary.dto.book.response.BookResponseDTO;
 import com.daniel.projects.booklibrary.model.Book;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

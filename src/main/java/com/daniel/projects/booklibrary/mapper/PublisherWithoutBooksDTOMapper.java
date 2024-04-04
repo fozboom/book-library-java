@@ -1,5 +1,6 @@
-package com.daniel.projects.booklibrary.dto.publisher.withoutbooks;
+package com.daniel.projects.booklibrary.mapper;
 
+import com.daniel.projects.booklibrary.dto.publisher.withoutbooks.PublisherWithoutBooksDTO;
 import com.daniel.projects.booklibrary.model.Publisher;
 import org.springframework.stereotype.Component;
 

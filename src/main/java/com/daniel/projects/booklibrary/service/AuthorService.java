@@ -1,7 +1,8 @@
 package com.daniel.projects.booklibrary.service;
 
+import com.daniel.projects.booklibrary.dto.author.name.AuthorNameDTO;
 import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTO;
-import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTOMapper;
+import com.daniel.projects.booklibrary.mapper.AuthorResponseDTOMapper;
 import com.daniel.projects.booklibrary.exception.ResourceAlreadyExistsException;
 import com.daniel.projects.booklibrary.exception.ResourceNotFoundException;
 import com.daniel.projects.booklibrary.model.Author;
@@ -27,28 +28,35 @@ public class AuthorService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorService.class);
 
-
 	public List<AuthorResponseDTO> findAllAuthors() {
 
 		return authorRepository.findAll().stream().map(authorMapper).toList();
 	}
 
-
-	public Author addAuthor(final Author author) {
-		if (authorRepository.existsByName(author.getName())) {
+	public Author addAuthor(final AuthorNameDTO authorName) {
+		if (authorRepository.existsByName(authorName.getName())) {
 			throw new ResourceAlreadyExistsException("Author with this name already exists");
 		}
-		cacheService.addAuthor(author);
+		Author author = new Author();
+		author.setName(authorName.getName());
 		return authorRepository.save(author);
 	}
 
+	public List<Author> addAuthors(final List<AuthorNameDTO> authorNames) {
+		List<Author> authors = authorNames.stream()
+				.filter(authorNameDTO -> !authorRepository.existsByName(authorNameDTO.getName())).map(authorNameDTO -> {
+					Author author = new Author();
+					author.setName(authorNameDTO.getName());
+					return author;
+				}).toList();
+		return authorRepository.saveAll(authors);
+	}
 
 	public AuthorResponseDTO findByName(final String name) {
 		Author author = authorRepository.findAuthorByName(name)
 				.orElseThrow(() -> new ResourceNotFoundException("Author not found with name: " + name));
 		return authorMapper.apply(author);
 	}
-
 
 	public void updateAuthorName(final Long id, final String newName) {
 		Author existingAuthor = authorRepository.findAuthorById(id)
@@ -65,7 +73,6 @@ public class AuthorService {
 			Author retrievedAuthor = authorRepository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id));
 
-
 			cacheService.addAuthor(retrievedAuthor);
 			LOGGER.info("Author retrieved from " + "repository and added to cache");
 			return authorMapper.apply(retrievedAuthor);
@@ -75,7 +82,6 @@ public class AuthorService {
 
 		return authorMapper.apply(author);
 	}
-
 
 	public void deleteAuthorByName(final String name) {
 		Author author = authorRepository.findAuthorByName(name)
@@ -87,4 +93,5 @@ public class AuthorService {
 		authorRepository.delete(author);
 		cacheService.removeAuthor(author.getId());
 	}
+
 }

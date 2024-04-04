@@ -1,5 +1,6 @@
-package com.daniel.projects.booklibrary.dto.publisher.save;
+package com.daniel.projects.booklibrary.mapper;
 
+import com.daniel.projects.booklibrary.dto.publisher.save.PublisherSaveDTO;
 import com.daniel.projects.booklibrary.model.Publisher;
 
 import java.util.function.Function;

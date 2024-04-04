@@ -41,4 +41,20 @@ public class Book {
 	private Publisher publisher;
 
 	private Double price;
+
+	@Override
+	public String toString() {
+		return "Book{" +
+				"id=" + id +
+				", title='" + title + '\'' +
+				'}';
+	}
+
+	public void setAuthors(List<Author> authors) {
+		if (authors == null) {
+			this.authors = new ArrayList<>();
+			return;
+		}
+		this.authors = new ArrayList<>(authors);
+	}
 }

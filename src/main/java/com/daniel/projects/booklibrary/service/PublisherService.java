@@ -1,7 +1,7 @@
 package com.daniel.projects.booklibrary.service;
 
 import com.daniel.projects.booklibrary.dto.publisher.response.PublisherResponseDTO;
-import com.daniel.projects.booklibrary.dto.publisher.response.PublisherResponseDTOMapper;
+import com.daniel.projects.booklibrary.mapper.PublisherResponseDTOMapper;
 import com.daniel.projects.booklibrary.dto.publisher.save.PublisherSaveDTO;
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.model.Publisher;

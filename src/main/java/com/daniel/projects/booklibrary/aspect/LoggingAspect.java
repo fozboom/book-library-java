@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class LoggingAspect {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoggingAspect.class);
 
-	@Pointcut("execution(* com.daniel.projects.booklibrary.service.*.*(..))")
+	@Pointcut("execution(public * com.daniel.projects.booklibrary.service.*.*(..))")
 	public void logServiceMethods() {
 	}
 

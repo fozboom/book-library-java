@@ -40,4 +40,12 @@ public class Publisher {
 			this.books.remove(book);
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Publisher{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				'}';
+	}
 }
