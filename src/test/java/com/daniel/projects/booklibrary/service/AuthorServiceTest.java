@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthorServiceTest {
+class AuthorServiceTest {
 	@InjectMocks
 	private AuthorService authorService;
 	@Mock
@@ -42,7 +42,7 @@ public class AuthorServiceTest {
 	private List<AuthorNameDTO> authorNames;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		author = new Author();
 		author.setId(1L);
 		author.setName("Author Name");
@@ -55,7 +55,7 @@ public class AuthorServiceTest {
 	}
 
 	@Test
-	public void testFindAllAuthors_Empty() {
+	void testFindAllAuthors_Empty() {
 		when(authorRepository.findAll()).thenReturn(new ArrayList<>());
 
 		List<AuthorResponseDTO> result = authorService.findAllAuthors();
@@ -63,7 +63,7 @@ public class AuthorServiceTest {
 		assertEquals(0, result.size());
 	}
 	@Test
-	public void testFindAllAuthors_NotEmpty() {
+	void testFindAllAuthors_NotEmpty() {
 		List<Author> authors = new ArrayList<>();
 		authors.add(author);
 
@@ -76,7 +76,7 @@ public class AuthorServiceTest {
 	}
 
 	@Test
-	public void testAddAuthor_NonExistingName() {
+	void testAddAuthor_NonExistingName() {
 		when(authorRepository.existsByName(authorNameDTO.getName())).thenReturn(false);
 		when(authorRepository.save(any(Author.class))).thenReturn(author);
 
@@ -86,7 +86,7 @@ public class AuthorServiceTest {
 	}
 
 	@Test
-	public void testAddAuthor_ExistingName() {
+	void testAddAuthor_ExistingName() {
 		when(authorRepository.existsByName(authorNameDTO.getName())).thenReturn(true);
 
 		assertThrows(ResourceAlreadyExistsException.class, () -> {
@@ -95,7 +95,7 @@ public class AuthorServiceTest {
 	}
 
 	@Test
-	public void testAddAuthors_NotExistingNames() {
+	void testAddAuthors_NotExistingNames() {
 		when(authorRepository.existsByName(authorNameDTO.getName())).thenReturn(false);
 		when(authorRepository.saveAll(anyList())).thenReturn(new ArrayList<>(List.of(author)));
 
@@ -105,7 +105,7 @@ public class AuthorServiceTest {
 		assertEquals(authorNameDTO.getName(), result.get(0).getName());
 	}
 	@Test
-	public void testAddAuthors_ExistingNames() {
+	void testAddAuthors_ExistingNames() {
 		when(authorRepository.existsByName(authorNameDTO.getName())).thenReturn(true);
 
 		List<Author> result = authorService.addAuthors(authorNames);
@@ -113,7 +113,7 @@ public class AuthorServiceTest {
 		assertEquals(0, result.size());
 	}
 	@Test
-	public void findByName_Founded() {
+	void findByName_Founded() {
 		when(authorRepository.findAuthorByName(author.getName())).thenReturn(Optional.of(author));
 		when(authorMapper.apply(author)).thenReturn(new AuthorResponseDTO());
 
@@ -123,17 +123,17 @@ public class AuthorServiceTest {
 	}
 
 	@Test
-	public void findByName_NotFounded() {
-
+	void findByName_NotFounded() {
+		String authorName = author.getName();
 		when(authorRepository.findAuthorByName(author.getName())).thenReturn(Optional.empty());
 
 		assertThrows(ResourceNotFoundException.class, () -> {
-			authorService.findByName(author.getName());
+			authorService.findByName(authorName);
 		});
 	}
 
 	@Test
-	public void testUpdateAuthorName_Founded() {
+	void testUpdateAuthorName_Founded() {
 		String newName = "New Name";
 
 		when(authorRepository.findAuthorById(author.getId())).thenReturn(Optional.of(author));
@@ -143,13 +143,14 @@ public class AuthorServiceTest {
 		});
 	}
 	@Test
-	public void testUpdateAuthorName_NotFounded() {
+	void testUpdateAuthorName_NotFounded() {
 		String newName = "New Name";
+		Long id = author.getId();
 
 		when(authorRepository.findAuthorById(author.getId())).thenReturn(Optional.empty());
 
 		assertThrows(ResourceNotFoundException.class, () -> {
-			authorService.updateAuthorName(author.getId(), newName);
+			authorService.updateAuthorName(id, newName);
 		});
 	}
 
@@ -164,7 +165,7 @@ public class AuthorServiceTest {
 		verify(authorRepository, never()).findById(anyLong());
 	}
 	@Test
-	public void testFindAuthorByIdFromRepository() {
+	void testFindAuthorByIdFromRepository() {
 		when(cacheService.getAuthor(author.getId())).thenReturn(null);
 		when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
 		when(authorMapper.apply(author)).thenReturn(new AuthorResponseDTO());
@@ -176,7 +177,7 @@ public class AuthorServiceTest {
 	}
 
 	@Test
-	public void testDeleteAuthorByName() {
+	void testDeleteAuthorByName() {
 		Book book = new Book();
 		book.setId(1L);
 		book.setTitle("Book Title");
