@@ -31,22 +31,15 @@ public class BookController {
 
 	@Operation(summary = "Save book")
 	@PostMapping("save")
-	public ResponseEntity<String> addBook(@RequestBody final Book book) {
-		Optional<Book> savedBook = service.addBook(book);
-		if (savedBook.isPresent()) {
-			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.CREATED);
-		} else {
-			return new ResponseEntity<>("Book with this title already exists", HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<Book> addBook(@RequestBody final Book book) {
+		Book savedBook = service.addBook(book);
+		return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
 	}
 
 	@Operation(summary = "Get book by title")
 	@GetMapping("findByTitle")
 	public ResponseEntity<BookResponseDTO> findByTitle(@RequestParam final String bookName) {
 		BookResponseDTO book = service.findByTitle(bookName);
-		if (book == null) {
-			return ResponseEntity.notFound().build();
-		}
 		return ResponseEntity.ok(book);
 	}
 
@@ -61,28 +54,20 @@ public class BookController {
 	@GetMapping("findById")
 	public ResponseEntity<BookResponseDTO> findById(@RequestParam final Long id) {
 		BookResponseDTO book = service.findById(id);
-		if (book == null) {
-			return ResponseEntity.notFound().build();
-		}
 		return ResponseEntity.ok(book);
 	}
 
 	@Operation(summary = "Update book")
 	@PutMapping("update")
 	ResponseEntity<String> updateBook(@RequestParam final Double price, @RequestParam final String title) {
-		boolean updated = service.updateBook(price, title);
-		if (updated) {
-			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
-		}
-		return new ResponseEntity<>("Book to update not found", HttpStatus.NOT_FOUND);
+		service.updateBook(price, title);
+		return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
 	}
 
 	@Operation(summary = "Delete book by title")
 	@DeleteMapping("delete/{bookName}")
 	public ResponseEntity<String> deleteBookByTitle(@PathVariable final String bookName) {
-		if (service.deleteBookByTitle(bookName)) {
-			return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
-		}
-		return new ResponseEntity<>("Book not found", HttpStatus.NOT_FOUND);
+		service.deleteBookByTitle(bookName);
+		return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
 	}
 }

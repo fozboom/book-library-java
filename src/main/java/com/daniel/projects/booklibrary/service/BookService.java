@@ -2,6 +2,8 @@ package com.daniel.projects.booklibrary.service;
 
 
 import com.daniel.projects.booklibrary.dto.book.response.BookResponseDTO;
+import com.daniel.projects.booklibrary.exception.ResourceAlreadyExistsException;
+import com.daniel.projects.booklibrary.exception.ResourceNotFoundException;
 import com.daniel.projects.booklibrary.mapper.BookResponseDTOMapper;
 import com.daniel.projects.booklibrary.model.Author;
 import com.daniel.projects.booklibrary.model.Book;
@@ -35,9 +37,9 @@ public class BookService {
 	}
 
 
-	public Optional<Book> addBook(final Book book) {
+	public Book addBook(final Book book) {
 		if (bookRepository.existsByTitle(book.getTitle())) {
-			return Optional.empty();
+			throw new ResourceAlreadyExistsException("Book with this title already exists");
 		}
 
 		handlePublisher(book);
@@ -49,16 +51,14 @@ public class BookService {
 		updatePublisherInCache(savedBook);
 		updateAuthorsInCache(savedBook);
 
-		return Optional.of(savedBook);
+		return savedBook;
 	}
 
 
 	public BookResponseDTO findByTitle(final String title) {
-		Book book = bookRepository.findByTitle(title);
+		Book book = bookRepository.findByTitle(title)
+				.orElseThrow(()->new ResourceNotFoundException("Book not found with title: " + title));
 
-		if (book == null) {
-			return null;
-		}
 		if (cacheService.getBook(book.getId()) == null) {
 			cacheService.addBook(book);
 			LOGGER.info("Book retrieved from " + "repository and added to cache");
@@ -71,14 +71,8 @@ public class BookService {
 		Book book = cacheService.getBook(id);
 
 		if (book == null) {
-			Optional<Book> optionalBook = bookRepository.findBookById(id);
-
-			if (optionalBook.isEmpty()) {
-				return null;
-			}
-
-			Book retrievedBook = optionalBook.get();
-
+			Book retrievedBook = bookRepository.findBookById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
 			cacheService.addBook(retrievedBook);
 			LOGGER.info("Book retrieved from " + "repository and added to cache");
 			return mapper.apply(retrievedBook);
@@ -95,46 +89,39 @@ public class BookService {
 	}
 
 
-	public boolean updateBook(final Double price, final String title) {
-		Book book = bookRepository.findByTitle(title);
-		if (book == null) {
-			return false;
-		}
+	public void updateBook(final Double price, final String title) {
+		Book book = bookRepository.findByTitle(title)
+				.orElseThrow(() -> new ResourceAlreadyExistsException("Book with this title already exists"));
 		book.setPrice(price);
 		bookRepository.save(book);
 		cacheService.addBook(book);
-		return true;
 	}
 
-	public boolean deleteBookByTitle(final String title) {
-		Book book = bookRepository.findByTitle(title);
+	public void deleteBookByTitle(final String title) {
+		Book book = bookRepository.findByTitle(title)
+				.orElseThrow(() -> new ResourceNotFoundException("Book not found with title: " + title));
 
-		if (book != null) {
-			cacheService.removeBook(book.getId());
+		cacheService.removeBook(book.getId());
 
-			Publisher publisher = book.getPublisher();
-			List<Author> authors = new ArrayList<>(book.getAuthors());
+		Publisher publisher = book.getPublisher();
+		List<Author> authors = new ArrayList<>(book.getAuthors());
 
-			if (publisher != null) {
-				publisher.removeBook(book);
-				publisherRepository.save(publisher);
-				cacheService.updatePublisher(publisher);
-			}
-
-			for (Author author : authors) {
-				author.removeBook(book);
-				authorRepository.save(author);
-				cacheService.updateAuthor(author);
-			}
-
-			book.setAuthors(null);
-			book.setPublisher(null);
-			bookRepository.delete(book);
-
-			return true;
+		if (publisher != null) {
+			publisher.removeBook(book);
+			publisherRepository.save(publisher);
+			cacheService.updatePublisher(publisher);
 		}
 
-		return false;
+		for (Author author : authors) {
+			author.removeBook(book);
+			authorRepository.save(author);
+			cacheService.updateAuthor(author);
+		}
+
+		book.setAuthors(null);
+		book.setPublisher(null);
+		bookRepository.delete(book);
+
 	}
 
 
