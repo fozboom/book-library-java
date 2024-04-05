@@ -75,28 +75,28 @@ public class CacheService {
 	}
 
 	public void removeAuthor(final Long id) {
-		for (Book book : bookCache.values()) {
-			if (book.getAuthors().removeIf(
-					authorInBook -> authorInBook.getId()
-							.equals(id))) {
+		Author author = getAuthor(id);
+		if (author != null) {
+			for (Book book : author.getBooks()) {
+				book.getAuthors().remove(author);
 				updateBook(book);
 			}
+			authorCache.remove(Fields.AUTHOR_PREFIX + id);
 		}
-
-		authorCache.remove(Fields.AUTHOR_PREFIX + id);
 	}
 
 	public void removePublisher(final Long id) {
-		for (Book book : bookCache.values()) {
-			if (book.getPublisher() != null
-					&& book.getPublisher().getId()
-					.equals(id)) {
-				book.setPublisher(null);
-				updateBook(book);
+		Publisher publisher = getPublisher(id);
+		if (publisher != null) {
+			for (Book book : bookCache.values()) {
+				if (book.getPublisher() != null && book.getPublisher().getId().equals(id)) {
+					book.setPublisher(null);
+					updateBook(book);
+				}
 			}
-		}
 
-		publisherCache.remove(Fields.PUBLISHER_PREFIX + id);
+			publisherCache.remove(Fields.PUBLISHER_PREFIX + id);
+		}
 	}
 
 	public void updateAuthor(final Author author) {
