@@ -115,6 +115,7 @@ class BookServiceTest {
 		assertThrows(ResourceNotFoundException.class, () -> bookService.findByTitle(title));
 	}
 
+
 	@Test
 	void testFindByIdFromCache() {
 		when(cacheService.getBook(book.getId())).thenReturn(book);
