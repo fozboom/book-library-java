@@ -123,8 +123,6 @@ public class BookService {
 		bookRepository.delete(book);
 
 	}
-
-
 	private void handlePublisher(final Book book) {
 		Publisher publisher = book.getPublisher();
 		Publisher existingPublisher = publisherRepository.findByName(publisher.getName());
