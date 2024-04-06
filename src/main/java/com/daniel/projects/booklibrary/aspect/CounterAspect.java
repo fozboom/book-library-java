@@ -22,7 +22,7 @@ public class CounterAspect {
 	@Before("execution(* com.daniel.projects.booklibrary.controller.*.*(..)) ")
 	public void incrementCounter() {
 		counterService.increment();
-		LOGGER.info("Counter incremented to: " + counterService.get());
+		LOGGER.info("Counter incremented to {} ", counterService.get());
 	}
 
 }

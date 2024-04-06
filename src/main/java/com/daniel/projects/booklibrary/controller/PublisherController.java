@@ -1,10 +1,8 @@
 package com.daniel.projects.booklibrary.controller;
 
-import com.daniel.projects.booklibrary.dto.author.name.AuthorNameDTO;
+
 import com.daniel.projects.booklibrary.dto.publisher.response.PublisherResponseDTO;
 import com.daniel.projects.booklibrary.dto.publisher.save.PublisherSaveDTO;
-import com.daniel.projects.booklibrary.model.Author;
-import com.daniel.projects.booklibrary.model.Fields;
 import com.daniel.projects.booklibrary.model.Publisher;
 import com.daniel.projects.booklibrary.service.PublisherService;
 import io.swagger.v3.oas.annotations.Operation;

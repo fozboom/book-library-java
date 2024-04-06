@@ -110,8 +110,9 @@ class BookServiceTest {
 
 	@Test
 	void testFindByTitle_NotExistingTitle() {
+		String title = book.getTitle();
 		when(bookRepository.findByTitle(book.getTitle())).thenReturn(Optional.empty());
-		assertThrows(ResourceNotFoundException.class, () -> bookService.findByTitle(book.getTitle()));
+		assertThrows(ResourceNotFoundException.class, () -> bookService.findByTitle(title));
 	}
 
 	@Test
