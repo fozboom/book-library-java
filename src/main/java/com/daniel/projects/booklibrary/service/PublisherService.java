@@ -45,9 +45,7 @@ public class PublisherService {
 	}
 
 	public List<Publisher> addPublishers(final List<PublisherSaveDTO> publishers) {
-		List<Publisher> newPublishers = publishers.stream()
-				.filter(publisherSaveDTO -> !publisherRepository
-						.existsByName(publisherSaveDTO.getName())).map(publisherSaveDTO -> {
+		List<Publisher> newPublishers = publishers.stream().filter(publisherSaveDTO -> !publisherRepository.existsByName(publisherSaveDTO.getName())).map(publisherSaveDTO -> {
 			Publisher publisher = new Publisher();
 			publisher.setName(publisherSaveDTO.getName());
 			publisher.setAddress(publisherSaveDTO.getAddress());
@@ -58,8 +56,7 @@ public class PublisherService {
 
 
 	public PublisherResponseDTO findByName(final String title) {
-		Publisher publisher = publisherRepository.findOptionalByName(title)
-				.orElseThrow(() -> new ResourceNotFoundException("Publisher not found with name: " + title));
+		Publisher publisher = publisherRepository.findOptionalByName(title).orElseThrow(() -> new ResourceNotFoundException("Publisher not found with name: " + title));
 		return publisherMapper.apply(publisher);
 	}
 
@@ -67,8 +64,7 @@ public class PublisherService {
 		Publisher publisher = cacheService.getPublisher(id);
 
 		if (publisher == null) {
-			Publisher retrievedPublisher = publisherRepository.findById(id)
-					.orElseThrow(() -> new ResourceNotFoundException("Publisher not found with id: " + id));
+			Publisher retrievedPublisher = publisherRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Publisher not found with id: " + id));
 
 
 			cacheService.addPublisher(retrievedPublisher);
@@ -83,25 +79,22 @@ public class PublisherService {
 
 
 	public void updatePublisherName(final Long id, final String newName) {
-		Publisher existingPublisher = publisherRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Publisher not found with id: " + id));
+		Publisher existingPublisher = publisherRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Publisher not found with id: " + id));
 
 		existingPublisher.setName(newName);
 		publisherRepository.save(existingPublisher);
 		cacheService.updatePublisher(existingPublisher);
 	}
 
-	public void deletePublisherByName(final String name) {
-		Publisher publisher = publisherRepository.findOptionalByName(name)
-				.orElseThrow(() -> new ResourceNotFoundException("Publisher not found with name: " + name));
-
-
+	public void deletePublisherById(final Long id) {
+		Publisher publisher = publisherRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Publisher not found with id: " + id));
 		for (Book book : publisher.getBooks()) {
 			book.setPublisher(null);
 			bookRepository.save(book);
 		}
 		publisherRepository.delete(publisher);
 		cacheService.removePublisher(publisher.getId());
-	}
 
+	}
 }

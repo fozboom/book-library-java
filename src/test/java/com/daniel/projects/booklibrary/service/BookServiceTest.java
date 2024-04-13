@@ -135,65 +135,74 @@ class BookServiceTest {
 
 	@Test
 	void testUpdateBook_ExistingTitle() {
-		String title = "Test Book";
-		Double price = 19.99;
-		book.setTitle(title);
+		Double newPrice = 19.99;
+		Long id = 1L;
+
+		Book book = new Book();
+		book.setId(id);
 		book.setPrice(9.99);
 
-		when(bookRepository.findByTitle(title)).thenReturn(Optional.of(book));
+		when(bookRepository.findBookById(id)).thenReturn(Optional.of(book));
+		when(bookRepository.save(any(Book.class))).thenReturn(book);
 
-		bookService.updateBook(price, title);
+		bookService.updateBook(newPrice, id);
 
-		verify(bookRepository, times(1)).findByTitle(title);
-		verify(bookRepository, times(1)).save(book);
-		verify(cacheService, times(1)).addBook(book);
-		assertEquals(price, book.getPrice());
+		assertEquals(newPrice, book.getPrice());
+		verify(bookRepository).save(book);
+		verify(cacheService).addBook(book);
 	}
 
 	@Test
 	void testUpdateBook_NotExistingTitle() {
-		String title = "Nonexistent Book";
-		Double price = 19.99;
+		Double newPrice = 19.99;
+		Long id = 1L;
 
-		when(bookRepository.findByTitle(title)).thenReturn(Optional.empty());
-		assertThrows(ResourceAlreadyExistsException.class, () -> bookService.updateBook(price, title));
-		verify(bookRepository, times(1)).findByTitle(title);
-		verify(bookRepository, times(0)).save(any(Book.class));
-		verify(cacheService, times(0)).addBook(any(Book.class));
+		Book book = new Book();
+		book.setId(id);
+		book.setPrice(9.99);
+
+		when(bookRepository.findBookById(id)).thenReturn(Optional.of(book));
+		when(bookRepository.save(any(Book.class))).thenReturn(book);
+
+		bookService.updateBook(newPrice, id);
+
+		assertEquals(newPrice, book.getPrice());
+		verify(bookRepository).save(book);
+		verify(cacheService).addBook(book);
 	}
 
 	@Test
-	void testDeleteBookByTitle_ExistingTitle() {
-		String title = "Test Book";
+	void testDeleteBookById_ExistingId() {
+		Long id = 1L;
 
+		Publisher publisher = new Publisher();
 		Book bookCopy = new Book();
-		bookCopy.setTitle(book.getTitle());
-		bookCopy.setId(book.getId());
-		bookCopy.setPublisher(book.getPublisher());
-		bookCopy.setAuthors(book.getAuthors());
+		bookCopy.setId(id);
+		bookCopy.setPublisher(publisher);
+		bookCopy.setAuthors(new ArrayList<>());
 
-		when(bookRepository.findByTitle(title)).thenReturn(Optional.of(bookCopy));
-		when(publisherRepository.save(bookCopy.getPublisher())).thenReturn(bookCopy.getPublisher());
+		when(bookRepository.findBookById(id)).thenReturn(Optional.of(bookCopy));
+		when(publisherRepository.save(publisher)).thenReturn(publisher);
 
-		bookService.deleteBookByTitle(title);
+		bookService.deleteBookById(id);
 
-		verify(bookRepository, times(1)).findByTitle(title);
-		verify(cacheService, times(1)).removeBook(bookCopy.getId());
-		verify(publisherRepository, times(1)).save(book.getPublisher());
-		verify(cacheService, times(1)).updatePublisher(book.getPublisher());
+		verify(bookRepository, times(1)).findBookById(id);
+		verify(cacheService, times(1)).removeBook(id);
+		verify(publisherRepository, times(1)).save(publisher);
+		verify(cacheService, times(1)).updatePublisher(publisher);
 		verify(authorRepository, times(bookCopy.getAuthors().size())).save(any(Author.class));
 		verify(cacheService, times(bookCopy.getAuthors().size())).updateAuthor(any(Author.class));
 		verify(bookRepository, times(1)).delete(bookCopy);
 	}
 
 	@Test
-	void testDeleteBookByTitle_NotExistingTitle() {
-		String title = "Nonexistent Book";
+	void testDeleteBookById_NotExistingId() {
+		Long id = 1L;
 
-		when(bookRepository.findByTitle(title)).thenReturn(Optional.empty());
+		when(bookRepository.findBookById(id)).thenReturn(Optional.empty());
 
-		assertThrows(ResourceNotFoundException.class, () -> bookService.deleteBookByTitle(title));
-		verify(bookRepository, times(1)).findByTitle(title);
+		assertThrows(ResourceNotFoundException.class, () -> bookService.deleteBookById(id));
+		verify(bookRepository, times(1)).findBookById(id);
 		verify(cacheService, times(0)).removeBook(any(Long.class));
 		verify(publisherRepository, times(0)).save(any(Publisher.class));
 		verify(cacheService, times(0)).updatePublisher(any(Publisher.class));
@@ -229,17 +238,16 @@ class BookServiceTest {
 		List<Author> authors = new ArrayList<>();
 		authors.add(newAuthor);
 
-
 		Book newBook = new Book();
 		newBook.setTitle("New Book");
 		newBook.setId(2L);
 		newBook.setPublisher(newPublisher);
 		newBook.setAuthors(authors);
 
-		when(bookRepository.findByTitle(newBook.getTitle())).thenReturn(Optional.of(newBook));
+		when(bookRepository.findBookById(newBook.getId())).thenReturn(Optional.of(newBook));
 		when(bookRepository.save(newBook)).thenReturn(newBook);
 
-		bookService.updateBook(19.99, newBook.getTitle());
+		bookService.updateBook(19.99, newBook.getId());
 
 		assertEquals(19.99, newBook.getPrice());
 

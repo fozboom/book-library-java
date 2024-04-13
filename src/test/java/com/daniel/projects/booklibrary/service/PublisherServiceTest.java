@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -169,19 +170,19 @@ class PublisherServiceTest {
 	}
 
 	@Test
-	void testDeletePublisherByName_Founded() {
+	void testDeletePublisherById_Founded() {
 		Book book = new Book();
 		book.setPublisher(publisher);
 		book.setId(1L);
 		book.setTitle("Book title");
 
-		when(publisherRepository.findOptionalByName(publisher.getName())).thenReturn(java.util.Optional.of(publisher));
+		when(publisherRepository.findById(publisher.getId())).thenReturn(Optional.of(publisher));
 		when(bookRepository.save(any(Book.class))).thenReturn(book);
 
 		publisher.getBooks().add(book);
 
 		assertDoesNotThrow(() -> {
-			publisherService.deletePublisherByName(publisher.getName());
+			publisherService.deletePublisherById(publisher.getId());
 		});
 
 		verify(bookRepository).save(book);

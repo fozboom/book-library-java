@@ -9,10 +9,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1/books")
 @AllArgsConstructor
@@ -58,15 +61,16 @@ public class BookController {
 
 	@Operation(summary = "Update book")
 	@PutMapping("update")
-	ResponseEntity<String> updateBook(@RequestParam final Double price, @RequestParam final String title) {
-		service.updateBook(price, title);
+	ResponseEntity<String> updateBook(@RequestParam final Double price, @RequestParam final Long id) {
+		service.updateBook(price, id);
 		return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
 	}
 
-	@Operation(summary = "Delete book by title")
-	@DeleteMapping("delete/{bookName}")
-	public ResponseEntity<String> deleteBookByTitle(@PathVariable final String bookName) {
-		service.deleteBookByTitle(bookName);
+	@Operation(summary = "Delete book by id")
+	@DeleteMapping("delete/{id}")
+	public ResponseEntity<String> deleteBookById(@PathVariable final Long id) {
+		service.deleteBookById(id);
 		return new ResponseEntity<>(SUCCESS_MESSAGE, HttpStatus.OK);
 	}
+
 }

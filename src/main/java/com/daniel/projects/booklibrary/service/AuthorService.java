@@ -1,5 +1,5 @@
 package com.daniel.projects.booklibrary.service;
-
+import org.springframework.transaction.annotation.Propagation;
 import com.daniel.projects.booklibrary.dto.author.name.AuthorNameDTO;
 import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTO;
 import com.daniel.projects.booklibrary.mapper.AuthorResponseDTOMapper;
@@ -9,6 +9,7 @@ import com.daniel.projects.booklibrary.model.Author;
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.repository.AuthorRepository;
 import com.daniel.projects.booklibrary.repository.BookRepository;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -82,10 +83,9 @@ public class AuthorService {
 
 		return authorMapper.apply(author);
 	}
-
-	public void deleteAuthorByName(final String name) {
-		Author author = authorRepository.findAuthorByName(name)
-				.orElseThrow(() -> new ResourceNotFoundException("Author not found with name: " + name));
+	public void deleteAuthorById(final Long id) {
+		Author author = authorRepository.findAuthorById(id)
+				.orElseThrow(()-> new ResourceNotFoundException("Author not found with id: " + id));
 		for (Book book : author.getBooks()) {
 			book.getAuthors().remove(author);
 			bookRepository.save(book);
@@ -93,5 +93,7 @@ public class AuthorService {
 		authorRepository.delete(author);
 		cacheService.removeAuthor(author.getId());
 	}
+
+
 
 }

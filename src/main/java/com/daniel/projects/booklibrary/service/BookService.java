@@ -89,18 +89,18 @@ public class BookService {
 	}
 
 
-	public void updateBook(final Double price, final String title) {
-		Book book = bookRepository.findByTitle(title)
-				.orElseThrow(() -> new ResourceAlreadyExistsException("Book with this title already exists"));
+	public void updateBook(final Double price, final Long id) {
+		System.out.println("price: " + price + " id: " + id);
+		Book book = bookRepository.findBookById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
 		book.setPrice(price);
 		bookRepository.save(book);
 		cacheService.addBook(book);
 	}
 
-	public void deleteBookByTitle(final String title) {
-		Book book = bookRepository.findByTitle(title)
-				.orElseThrow(() -> new ResourceNotFoundException("Book not found with title: " + title));
-
+	public void deleteBookById(final Long id) {
+		Book book = bookRepository.findBookById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
 		cacheService.removeBook(book.getId());
 
 		Publisher publisher = book.getPublisher();
@@ -121,8 +121,9 @@ public class BookService {
 		book.setAuthors(null);
 		book.setPublisher(null);
 		bookRepository.delete(book);
-
 	}
+
+
 	private void handlePublisher(final Book book) {
 		Publisher publisher = book.getPublisher();
 		Publisher existingPublisher = publisherRepository.findByName(publisher.getName());

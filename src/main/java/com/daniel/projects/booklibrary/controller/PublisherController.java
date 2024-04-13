@@ -14,8 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1/publishers")
 @AllArgsConstructor
@@ -66,10 +66,12 @@ public class PublisherController {
 		return new ResponseEntity<>("Publisher updated successfully", HttpStatus.OK);
 	}
 
-	@Operation(summary = "Delete publisher by name")
-	@DeleteMapping("delete/{publisherName}")
-	public ResponseEntity<String> deletePublisher(@PathVariable final String publisherName) {
-		service.deletePublisherByName(publisherName);
+	@Operation(summary = "Delete publisher by id")
+	@DeleteMapping("delete/{publisherId}")
+	public ResponseEntity<String> deletePublisher(@PathVariable final Long publisherId) {
+		service.deletePublisherById(publisherId);
 		return new ResponseEntity<>("Publisher deleted successfully", HttpStatus.OK);
 	}
+
+
 }

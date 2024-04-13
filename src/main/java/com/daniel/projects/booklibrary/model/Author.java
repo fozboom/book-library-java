@@ -1,13 +1,7 @@
 package com.daniel.projects.booklibrary.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -28,7 +22,7 @@ public class Author {
 	@Column(unique = true)
 	private String name;
 
-	@ManyToMany(mappedBy = "authors")
+	@ManyToMany(mappedBy = "authors", fetch = FetchType.EAGER)
 	private List<Book> books = new ArrayList<>();
 
 	public void addBook(final Book book) {

@@ -177,23 +177,56 @@ class AuthorServiceTest {
 	}
 
 	@Test
-	void testDeleteAuthorByName() {
+	void testFindAuthorById_Found() {
+		when(cacheService.getAuthor(author.getId())).thenReturn(null);
+		when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
+		when(authorMapper.apply(author)).thenReturn(new AuthorResponseDTO());
+
+		AuthorResponseDTO result = authorService.findAuthorById(author.getId());
+
+		assertNotNull(result);
+		verify(cacheService).addAuthor(author);
+	}
+
+	@Test
+	void testFindAuthorById_NotFound() {
+		Long id = author.getId();
+		when(cacheService.getAuthor(id)).thenReturn(null);
+		when(authorRepository.findById(id)).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			authorService.findAuthorById(id);
+		});
+	}
+
+	@Test
+	void testDeleteAuthorById_Found() {
 		Book book = new Book();
 		book.setId(1L);
 		book.setTitle("Book Title");
 		book.setAuthors(new ArrayList<>(List.of(author)));
 
-		when(authorRepository.findAuthorByName(author.getName())).thenReturn(Optional.of(author));
+		when(authorRepository.findAuthorById(author.getId())).thenReturn(Optional.of(author));
 		when(bookRepository.save(any(Book.class))).thenReturn(book);
 
 		author.getBooks().add(book);
 
 		assertDoesNotThrow(() -> {
-			authorService.deleteAuthorByName(author.getName());
+			authorService.deleteAuthorById(author.getId());
 		});
 
 		verify(bookRepository).save(any(Book.class));
 		verify(authorRepository).delete(author);
 		verify(cacheService).removeAuthor(author.getId());
+	}
+
+	@Test
+	void testDeleteAuthorById_NotFound() {
+		Long id = author.getId();
+		when(authorRepository.findAuthorById(id)).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			authorService.deleteAuthorById(id);
+		});
 	}
 }

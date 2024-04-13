@@ -66,10 +66,11 @@ public class AuthorController {
 		return new ResponseEntity<>("Author updated successfully", HttpStatus.OK);
 	}
 
-	@Operation(summary = "Delete author by name")
-	@DeleteMapping("/delete/{name}")
-	public ResponseEntity<String> deleteBookByName(@Valid @PathVariable final String name) {
-		service.deleteAuthorByName(name);
+	@Operation(summary = "Delete author by id")
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<String> deleteBookById(@Valid @PathVariable final Long id) {
+		service.deleteAuthorById(id);
 		return new ResponseEntity<>("Author deleted successfully", HttpStatus.OK);
 	}
+
 }
