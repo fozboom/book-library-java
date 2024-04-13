@@ -1,5 +1,4 @@
 package com.daniel.projects.booklibrary.service;
-import org.springframework.transaction.annotation.Propagation;
 import com.daniel.projects.booklibrary.dto.author.name.AuthorNameDTO;
 import com.daniel.projects.booklibrary.dto.author.response.AuthorResponseDTO;
 import com.daniel.projects.booklibrary.mapper.AuthorResponseDTOMapper;
@@ -9,7 +8,6 @@ import com.daniel.projects.booklibrary.model.Author;
 import com.daniel.projects.booklibrary.model.Book;
 import com.daniel.projects.booklibrary.repository.AuthorRepository;
 import com.daniel.projects.booklibrary.repository.BookRepository;
-import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,6 +24,7 @@ public class AuthorService {
 	private final BookRepository bookRepository;
 	private final AuthorResponseDTOMapper authorMapper;
 	private final CacheService cacheService;
+	private final String NOT_FOUND_MESSAGE = "Author not found with ";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorService.class);
 
@@ -55,13 +54,13 @@ public class AuthorService {
 
 	public AuthorResponseDTO findByName(final String name) {
 		Author author = authorRepository.findAuthorByName(name)
-				.orElseThrow(() -> new ResourceNotFoundException("Author not found with name: " + name));
+				.orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MESSAGE + name));
 		return authorMapper.apply(author);
 	}
 
 	public void updateAuthorName(final Long id, final String newName) {
 		Author existingAuthor = authorRepository.findAuthorById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id));
+				.orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MESSAGE + id));
 		existingAuthor.setName(newName);
 		authorRepository.save(existingAuthor);
 		cacheService.updateAuthor(existingAuthor);
@@ -72,7 +71,7 @@ public class AuthorService {
 
 		if (author == null) {
 			Author retrievedAuthor = authorRepository.findById(id)
-					.orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id));
+					.orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MESSAGE + id));
 
 			cacheService.addAuthor(retrievedAuthor);
 			LOGGER.info("Author retrieved from " + "repository and added to cache");
@@ -85,7 +84,7 @@ public class AuthorService {
 	}
 	public void deleteAuthorById(final Long id) {
 		Author author = authorRepository.findAuthorById(id)
-				.orElseThrow(()-> new ResourceNotFoundException("Author not found with id: " + id));
+				.orElseThrow(()-> new ResourceNotFoundException(NOT_FOUND_MESSAGE + id));
 		for (Book book : author.getBooks()) {
 			book.getAuthors().remove(author);
 			bookRepository.save(book);

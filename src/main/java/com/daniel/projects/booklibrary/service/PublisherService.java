@@ -26,6 +26,7 @@ public class PublisherService {
 	private final BookRepository bookRepository;
 	private final PublisherResponseDTOMapper publisherMapper;
 	private final CacheService cacheService;
+	private final String NOT_FOUND_MESSAGE = "Publisher not found with ";
 	private static final Logger LOGGER = LoggerFactory.getLogger(PublisherService.class);
 
 	public List<PublisherResponseDTO> findAllPublishers() {
@@ -64,7 +65,8 @@ public class PublisherService {
 		Publisher publisher = cacheService.getPublisher(id);
 
 		if (publisher == null) {
-			Publisher retrievedPublisher = publisherRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Publisher not found with id: " + id));
+			Publisher retrievedPublisher = publisherRepository.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MESSAGE + id));
 
 
 			cacheService.addPublisher(retrievedPublisher);
@@ -79,7 +81,8 @@ public class PublisherService {
 
 
 	public void updatePublisherName(final Long id, final String newName) {
-		Publisher existingPublisher = publisherRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Publisher not found with id: " + id));
+		Publisher existingPublisher = publisherRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Publisher not found with id: " + id));
 
 		existingPublisher.setName(newName);
 		publisherRepository.save(existingPublisher);
@@ -88,7 +91,7 @@ public class PublisherService {
 
 	public void deletePublisherById(final Long id) {
 		Publisher publisher = publisherRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Publisher not found with id: " + id));
+				.orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MESSAGE+ id));
 		for (Book book : publisher.getBooks()) {
 			book.setPublisher(null);
 			bookRepository.save(book);
