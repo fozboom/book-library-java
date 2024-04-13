@@ -29,7 +29,7 @@ public class BookService {
 	private final AuthorRepository authorRepository;
 	private final PublisherRepository publisherRepository;
 	private final BookResponseDTOMapper mapper;
-	private final String NOT_FOUND_MESSAGE = "Book not found with ";
+	private final static String notFoundMessage = "Book not found with ";
 	private static final Logger LOGGER = LoggerFactory.getLogger(BookService.class);
 
 	public List<BookResponseDTO> findAllBooks() {
@@ -58,7 +58,7 @@ public class BookService {
 
 	public BookResponseDTO findByTitle(final String title) {
 		Book book = bookRepository.findByTitle(title)
-				.orElseThrow(()->new ResourceNotFoundException(NOT_FOUND_MESSAGE+ title));
+				.orElseThrow(()->new ResourceNotFoundException(notFoundMessage + title));
 
 		if (cacheService.getBook(book.getId()) == null) {
 			cacheService.addBook(book);
@@ -73,7 +73,7 @@ public class BookService {
 
 		if (book == null) {
 			Book retrievedBook = bookRepository.findBookById(id)
-					.orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MESSAGE + id));
+					.orElseThrow(() -> new ResourceNotFoundException(notFoundMessage + id));
 			cacheService.addBook(retrievedBook);
 			LOGGER.info("Book retrieved from " + "repository and added to cache");
 			return mapper.apply(retrievedBook);
@@ -92,7 +92,7 @@ public class BookService {
 
 	public void updateBook(final Double price, final Long id) {
 		Book book = bookRepository.findBookById(id)
-				.orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MESSAGE + id));
+				.orElseThrow(() -> new ResourceNotFoundException(notFoundMessage + id));
 		book.setPrice(price);
 		bookRepository.save(book);
 		cacheService.addBook(book);
@@ -100,7 +100,7 @@ public class BookService {
 
 	public void deleteBookById(final Long id) {
 		Book book = bookRepository.findBookById(id)
-				.orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MESSAGE + id));
+				.orElseThrow(() -> new ResourceNotFoundException(notFoundMessage + id));
 		cacheService.removeBook(book.getId());
 
 		Publisher publisher = book.getPublisher();

@@ -24,7 +24,7 @@ public class AuthorService {
 	private final BookRepository bookRepository;
 	private final AuthorResponseDTOMapper authorMapper;
 	private final CacheService cacheService;
-	private final String NOT_FOUND_MESSAGE = "Author not found with ";
+	private final static String notFoundMessage = "Author not found with ";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorService.class);
 
@@ -54,13 +54,13 @@ public class AuthorService {
 
 	public AuthorResponseDTO findByName(final String name) {
 		Author author = authorRepository.findAuthorByName(name)
-				.orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MESSAGE + name));
+				.orElseThrow(() -> new ResourceNotFoundException(notFoundMessage + name));
 		return authorMapper.apply(author);
 	}
 
 	public void updateAuthorName(final Long id, final String newName) {
 		Author existingAuthor = authorRepository.findAuthorById(id)
-				.orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MESSAGE + id));
+				.orElseThrow(() -> new ResourceNotFoundException(notFoundMessage + id));
 		existingAuthor.setName(newName);
 		authorRepository.save(existingAuthor);
 		cacheService.updateAuthor(existingAuthor);
@@ -71,7 +71,7 @@ public class AuthorService {
 
 		if (author == null) {
 			Author retrievedAuthor = authorRepository.findById(id)
-					.orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MESSAGE + id));
+					.orElseThrow(() -> new ResourceNotFoundException(notFoundMessage + id));
 
 			cacheService.addAuthor(retrievedAuthor);
 			LOGGER.info("Author retrieved from " + "repository and added to cache");
@@ -84,7 +84,7 @@ public class AuthorService {
 	}
 	public void deleteAuthorById(final Long id) {
 		Author author = authorRepository.findAuthorById(id)
-				.orElseThrow(()-> new ResourceNotFoundException(NOT_FOUND_MESSAGE + id));
+				.orElseThrow(()-> new ResourceNotFoundException(notFoundMessage + id));
 		for (Book book : author.getBooks()) {
 			book.getAuthors().remove(author);
 			bookRepository.save(book);
