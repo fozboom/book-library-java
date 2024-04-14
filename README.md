@@ -22,7 +22,7 @@ The application allows you to manage a collection of books, authors, and publish
 To run the application, you need to have Java and Maven installed on your machine. You can then clone the repository and run the application using the following commands:
 
 ```sh
-git clone https://github.com/yourusername/booklibrary.git
+git clone https://github.com/fozboom/book-library-java.git
 cd booklibrary
 mvn spring-boot:run
 ```
@@ -34,8 +34,8 @@ The application will start and be accessible at `http://localhost:8080`.
 This application can also be run using Docker. The Dockerfile is included in the repository. To build and run the Docker image, use the following commands:
 
 ```sh
-docker build -t booklibrary .
-docker run -p 8080:8080 booklibrary
+docker build -t book_lib_backend .        
+docker run -p 8080:8080 book_lib_backend
 ```
 
 The application will start and be accessible at `http://localhost:8080`.
