@@ -13,6 +13,8 @@ FROM eclipse-temurin:21-alpine
 
 WORKDIR /app
 
+RUN apk --no-cache add curl
+
 COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080

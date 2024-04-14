@@ -17,7 +17,7 @@ import java.util.List;
 
 
 
-@CrossOrigin(value = "http://${CROSS_ORIGIN}:3000")
+@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1/authors")
 @AllArgsConstructor
@@ -30,6 +30,7 @@ public class AuthorController {
 	public List<AuthorResponseDTO> findAllAuthors() {
 		return service.findAllAuthors();
 	}
+
 
 	@Operation(summary = "Save author")
 	@PostMapping("save")

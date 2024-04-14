@@ -10,8 +10,16 @@ services:
       POSTGRES_DB: book_lib_database
     volumes:
       - book_lib_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-     - book_lib_net
+      - book_lib_net
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   backend:
     image: book_lib_backend
     container_name: backend
@@ -24,18 +32,22 @@ services:
       - book_lib_net
     ports:
       - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
   frontend:
     image: book_lib_frontend
     container_name: frontend
-    environment:
-      LOCALHOST_CONNECTION: backend
     networks:
       - book_lib_net
     ports:
       - "3000:3000"
+    depends_on:
+      - backend
+      - db
 volumes:
   book_lib_data:
+
+
 networks:
   book_lib_net:
-
-
