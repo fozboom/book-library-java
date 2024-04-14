@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    container_name: database
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: book_lib_database
+    volumes:
+      - book_lib_data:/var/lib/postgresql/data
+    networks:
+     - book_lib_net
+  backend:
+    image: book_lib_backend
+    container_name: backend
+    environment:
+      DB_CONNECTION_HOST: database
+      DB_USER: postgres
+      DB_PASSWORD: admin
+      DB_DATABASE: book_lib_database
+    networks:
+      - book_lib_net
+    ports:
+      - "8080:8080"
+  frontend:
+    image: book_lib_frontend
+    container_name: frontend
+    environment:
+      LOCALHOST_CONNECTION: backend
+    networks:
+      - book_lib_net
+    ports:
+      - "3000:3000"
+volumes:
+  book_lib_data:
+networks:
+  book_lib_net:
+
+
